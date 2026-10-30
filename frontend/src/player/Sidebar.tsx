@@ -4,11 +4,13 @@ import { LogoBars, Spinner } from '../shared/ui';
 
 export type NavTab = 'dashboard' | 'trading' | 'markets';
 
-const NAV = [
+export const NAV = [
   { id: 'dashboard' as NavTab, label: 'Dashboard', icon: Home },
   { id: 'trading' as NavTab, label: 'Trading', icon: ArrowLeftRight },
   { id: 'markets' as NavTab, label: 'Markets', icon: Landmark },
 ];
+
+const link = 'w-full flex items-center px-3 py-2.5 rounded-xl text-[15px] transition-colors duration-150';
 
 export const Sidebar: React.FC<{
   currentTab: NavTab;
@@ -17,55 +19,47 @@ export const Sidebar: React.FC<{
   playerName: string | null;
   onLogout: () => void;
   loggingOut: boolean;
-}> = ({ currentTab, onTabChange, teamName, playerName, onLogout, loggingOut }) => {
-  const initials = (playerName || teamName).split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
-  return (
-    <aside className="w-64 bg-[#0d121c] border-r border-[#1a2336] flex flex-col justify-between shrink-0 select-none min-h-screen">
+}> = ({ currentTab, onTabChange, teamName, playerName, onLogout, loggingOut }) => (
+  <aside className="w-64 flex flex-col shrink-0 select-none min-h-screen px-6 pt-10 pb-8">
+    <div className="flex items-center space-x-3 px-1">
+      <LogoBars />
       <div>
-        <div className="p-6 pb-8 flex items-center space-x-3">
-          <LogoBars />
-          <div>
-            <div className="font-extrabold tracking-wider text-xl leading-none text-white">MONOPOLY</div>
-            <div className="text-[9px] tracking-wider whitespace-nowrap text-slate-400 font-semibold uppercase mt-1">FINANCE • STRATEGY • MARKETS</div>
-          </div>
-        </div>
-        <nav className="px-3 space-y-1.5">
-          {NAV.map((item) => {
-            const Icon = item.icon;
-            const active = currentTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => onTabChange(item.id)}
-                aria-current={active ? 'page' : undefined}
-                className={`w-full flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-all duration-150 ${
-                  active ? 'bg-[#371920] text-white border border-[#58212a] shadow-sm' : 'text-slate-300 hover:text-white hover:bg-[#161f30]'
-                }`}
-              >
-                <Icon className={`w-5 h-5 mr-3.5 ${active ? 'text-[#f87171]' : 'text-slate-400'}`} />
-                <span className="font-semibold text-[15px]">{item.label}</span>
-              </button>
-            );
-          })}
-        </nav>
+        <div className="font-semibold tracking-[0.18em] text-sm leading-none text-white">MONOPOLY</div>
+        <div className="text-[9px] tracking-wider whitespace-nowrap text-slate-500 font-medium uppercase mt-1.5">Finance • Strategy • Markets</div>
       </div>
-      <div className="p-4 border-t border-[#1a2336] space-y-3">
-        <div className="flex items-center space-x-3 p-2">
-          <div className="w-9 h-9 rounded-full bg-[#334155] border border-slate-600 flex items-center justify-center font-bold text-xs text-slate-200">{initials}</div>
-          <div className="min-w-0">
-            <div className="text-sm font-bold text-white leading-tight truncate">{teamName}</div>
-            {playerName && <div className="text-xs text-slate-400 truncate">{playerName}</div>}
-          </div>
-        </div>
-        <button
-          onClick={onLogout}
-          disabled={loggingOut}
-          className="w-full flex items-center px-3 py-2 text-sm text-slate-400 hover:text-white hover:bg-[#161f30] rounded-lg transition-colors disabled:opacity-50"
-        >
-          {loggingOut ? <Spinner className="w-4 h-4 mr-3" /> : <LogOut className="w-4 h-4 mr-3" />}
-          <span>Logout</span>
-        </button>
+    </div>
+
+    <nav className="mt-14 space-y-1">
+      {NAV.map((item) => {
+        const Icon = item.icon;
+        const active = currentTab === item.id;
+        return (
+          <button
+            key={item.id}
+            onClick={() => onTabChange(item.id)}
+            aria-current={active ? 'page' : undefined}
+            className={`${link} ${active ? 'text-white bg-white/[0.04]' : 'text-slate-400 hover:text-slate-100 hover:bg-white/[0.03]'}`}
+          >
+            <Icon className={`w-[18px] h-[18px] mr-3.5 ${active ? 'text-white' : 'text-slate-500'}`} strokeWidth={active ? 2.4 : 2} />
+            <span className={active ? 'font-medium' : ''}>{item.label}</span>
+          </button>
+        );
+      })}
+    </nav>
+
+    <div className="my-6 h-px bg-white/[0.07]" />
+
+    <div className="space-y-1">
+      <div className="flex items-center px-3 py-2.5 text-[15px] text-slate-400 min-w-0">
+        <span className="w-[18px] h-[18px] mr-3.5 rounded-full bg-slate-600 text-[9px] font-bold text-white flex items-center justify-center shrink-0">
+          {(playerName || teamName).trim().charAt(0).toUpperCase()}
+        </span>
+        <span className="truncate">{playerName ? `${playerName} · ${teamName}` : teamName}</span>
       </div>
-    </aside>
-  );
-};
+      <button onClick={onLogout} disabled={loggingOut} className={`${link} text-slate-400 hover:text-slate-100 hover:bg-white/[0.03] disabled:opacity-50`}>
+        {loggingOut ? <Spinner className="w-[18px] h-[18px] mr-3.5" /> : <LogOut className="w-[18px] h-[18px] mr-3.5 text-slate-500" />}
+        <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+);

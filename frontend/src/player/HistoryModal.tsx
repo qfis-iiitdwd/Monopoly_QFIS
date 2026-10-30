@@ -20,7 +20,7 @@ export const HistoryModal: React.FC<{ rows: Activity[]; onClose: () => void; loa
   return (
     <Modal wide title="All Order & Transaction History" subtitle="Complete record of your trades, rejections and organiser corrections" onClose={onClose}
       footer={<button onClick={onClose} className={btn.outline + ' px-5'}>Done</button>}>
-      <div className="-mx-6 -mt-6 px-6 py-3 border-b border-[#1e2638] flex flex-wrap items-center justify-between gap-3 bg-[#0f1420]">
+      <div className="-mx-6 -mt-6 px-6 py-3 border-b border-[#24262b] flex flex-wrap items-center justify-between gap-3 bg-[#0e0f11]">
         <div className="flex flex-wrap items-center gap-2">
           {FILTERS.map((f) => (
             <button key={f} onClick={() => setFilter(f)} aria-pressed={filter === f}
@@ -32,7 +32,7 @@ export const HistoryModal: React.FC<{ rows: Activity[]; onClose: () => void; loa
         <div className="relative min-w-[200px] flex-1 sm:flex-none">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input type="text" placeholder="Search history..." value={search} onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#161d2d] border border-[#222e47] rounded-lg pl-9 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500" />
+            className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-white/25" />
         </div>
       </div>
       <div className="-mx-6">

@@ -84,7 +84,7 @@ export const OrderConfirm: React.FC<{
     const o = 'order' in outcome ? outcome.order : null;
     return (
       <Modal title={outcome.kind === 'executed' ? 'Order executed' : outcome.kind === 'rejected' ? 'Order rejected' : 'Order not confirmed'} onClose={onClose}
-        footer={<button onClick={onClose} className={btn.primary}>Done</button>}>
+        footer={<button onClick={onClose} className={btn.light}>Done</button>}>
         {outcome.kind === 'executed' && o && (
           <div className="space-y-3">
             <div className="flex items-center space-x-2 text-emerald-400 font-bold"><CheckCircle className="w-5 h-5" /><span>Executed ✓</span></div>
@@ -132,7 +132,7 @@ export const OrderConfirm: React.FC<{
           </button>
         </>
       }>
-      <div className="flex items-center justify-between pb-3 border-b border-[#1e2638]">
+      <div className="flex items-center justify-between pb-3 border-b border-[#24262b]">
         <div className="flex items-center space-x-3">
           <TickerBadge ticker={company.ticker} industry={company.industry} large />
           <div>
@@ -161,7 +161,7 @@ export const OrderConfirm: React.FC<{
 };
 
 const Summary: React.FC<{ rows: [string, string][]; total?: [string, string] }> = ({ rows, total }) => (
-  <div className="space-y-2.5 text-sm bg-[#151c2b] p-4 rounded-xl border border-[#202b40]">
+  <div className="space-y-2.5 text-sm bg-[#1a1b1f] p-4 rounded-xl border border-[#2a2c31]">
     {rows.map(([k, v]) => (
       <div key={k} className="flex justify-between text-slate-300 gap-4">
         <span>{k}</span>
@@ -169,7 +169,7 @@ const Summary: React.FC<{ rows: [string, string][]; total?: [string, string] }> 
       </div>
     ))}
     {total && (
-      <div className="flex justify-between text-slate-300 pt-2 border-t border-[#232e44]">
+      <div className="flex justify-between text-slate-300 pt-2 border-t border-[#2a2c31]">
         <span className="font-semibold text-white">{total[0]}</span>
         <span className="font-mono font-bold text-lg text-white">{total[1]}</span>
       </div>

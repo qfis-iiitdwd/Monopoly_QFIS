@@ -29,16 +29,16 @@ export const Login: React.FC<{ onDone: () => void }> = ({ onDone }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <form onSubmit={submit} className="w-full max-w-sm rounded-2xl bg-[#111622] border border-[#1e2638] p-7 shadow-2xl space-y-5">
+      <form onSubmit={submit} className="w-full max-w-sm mv-glow relative z-10 rounded-[1.75rem] bg-white/[0.03] border border-white/[0.07] backdrop-blur-xl p-8 shadow-2xl space-y-5">
         <div className="flex items-center space-x-3">
           <LogoBars />
           <div>
-            <div className="font-extrabold tracking-wider text-xl leading-none text-white">MONOPOLY</div>
+            <div className="font-semibold tracking-[0.18em] text-sm leading-none text-white">MONOPOLY</div>
             <div className="text-[9px] tracking-wider whitespace-nowrap text-slate-400 font-semibold uppercase mt-1">FINANCE • STRATEGY • MARKETS</div>
           </div>
         </div>
         <div>
-          <h1 className="text-lg font-bold text-white">Team login</h1>
+          <h1 className="text-2xl font-normal text-white tracking-tight">Team login</h1>
           <p className="text-xs text-slate-400 mt-1">Use the team ID and password from your slip. Every member of a team can log in at once.</p>
         </div>
         <label className="block space-y-1.5">
@@ -54,7 +54,7 @@ export const Login: React.FC<{ onDone: () => void }> = ({ onDone }) => {
           <input className={input} value={member} onChange={(e) => setMember(e.target.value)} maxLength={40} placeholder="e.g. Priya" />
         </label>
         <ErrorNote text={error} />
-        <button type="submit" disabled={busy || !teamId || !password} className={`${btn.primary} w-full py-3 text-sm`}>
+        <button type="submit" disabled={busy || !teamId || !password} className={`${btn.light} w-full py-3 text-sm`}>
           {busy ? <Spinner /> : <LogIn className="w-4 h-4" />}
           <span>{busy ? 'Logging in…' : 'Log in'}</span>
         </button>

@@ -9,7 +9,7 @@ export const ActivityTable: React.FC<{ rows: Activity[]; empty: string; header?:
   <div className="overflow-x-auto">
     <table className="w-full text-left border-collapse monopoly-table">
       <thead>
-        <tr className={`text-xs font-semibold text-slate-400 border-b border-[#1b2233] ${header}`}>
+        <tr className={`text-xs font-medium text-slate-500 border-b border-white/[0.06] ${header}`}>
           <th className="py-3 px-6">Time</th>
           <th className="py-3 px-4">Type</th>
           <th className="py-3 px-4">Company</th>
@@ -18,10 +18,10 @@ export const ActivityTable: React.FC<{ rows: Activity[]; empty: string; header?:
           <th className="py-3 px-6 text-right">Status</th>
         </tr>
       </thead>
-      <tbody className="divide-y divide-[#171e2c] text-sm">
+      <tbody className="divide-y divide-white/[0.04] text-sm">
         {rows.length === 0 && <EmptyRow cols={6} text={empty} />}
         {rows.map((a) => (
-          <tr key={a.key} className="hover:bg-[#151c2a] transition-colors">
+          <tr key={a.key} className="hover:bg-white/[0.03] transition-colors">
             <td className="py-3.5 px-6 text-slate-400 text-xs font-mono whitespace-nowrap">{clock(a.at)}</td>
             <td className="py-3.5 px-4"><SideBadge side={a.type} /></td>
             <td className="py-3.5 px-4 font-bold text-white tracking-wide">{a.symbol}</td>

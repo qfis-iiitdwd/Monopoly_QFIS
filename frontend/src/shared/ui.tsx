@@ -3,10 +3,14 @@ import { AlertTriangle, CheckCircle2, ChevronLeft, ChevronRight, Loader2, X } fr
 
 // ---- Logo -----------------------------------------------------------------------------------
 export const LogoBars: React.FC<{ small?: boolean }> = ({ small }) => (
-  <div className={`flex items-end space-x-1 ${small ? 'h-5' : 'h-7'}`}>
-    <div className={`${small ? 'w-1 h-3' : 'w-1.5 h-4'} bg-[#e63946] rounded-xs`} />
-    <div className={`${small ? 'w-1 h-5' : 'w-1.5 h-7'} bg-[#e63946] rounded-xs`} />
-    <div className={`${small ? 'w-1 h-4' : 'w-1.5 h-5'} bg-[#e63946] rounded-xs`} />
+  <div
+    className={`${small ? 'w-8 h-8 rounded-lg' : 'w-11 h-11 rounded-xl'} shrink-0 flex items-center justify-center bg-gradient-to-br from-sky-300 via-sky-400 to-blue-500 shadow-lg shadow-sky-900/40 ring-1 ring-white/20`}
+  >
+    <svg viewBox="0 0 24 24" className={small ? 'w-4 h-4' : 'w-6 h-6'} fill="white" aria-hidden>
+      <rect x="4" y="12" width="4" height="8" rx="1.5" />
+      <rect x="10" y="5" width="4" height="15" rx="1.5" />
+      <rect x="16" y="9" width="4" height="11" rx="1.5" />
+    </svg>
   </div>
 );
 
@@ -34,7 +38,7 @@ export const SideBadge: React.FC<{ side: string }> = ({ side }) =>
   ) : side === 'sell' || side === 'SELL' ? (
     <span className="px-2.5 py-1 text-[11px] font-bold rounded bg-[#3b171c] text-[#f87171] border border-[#6b222d]/40">SELL</span>
   ) : (
-    <span className="px-2.5 py-1 text-[11px] font-bold rounded bg-[#20293a] text-slate-300 border border-slate-700 whitespace-nowrap">{side}</span>
+    <span className="px-2.5 py-1 text-[11px] font-bold rounded bg-[var(--mv-raised,#20293a)] text-slate-300 border border-slate-700 whitespace-nowrap">{side}</span>
   );
 
 export const Dot: React.FC<{ tone: 'green' | 'red' | 'amber' | 'blue' | 'grey' }> = ({ tone }) => (
@@ -69,7 +73,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           <div
             key={t.id}
             role="status"
-            className={`pointer-events-auto max-w-md flex items-start space-x-3 bg-[#111726] border ${
+            className={`pointer-events-auto max-w-md flex items-start space-x-3 bg-[var(--mv-deep,#111726)] border ${
               t.tone === 'ok' ? 'border-emerald-500/50' : 'border-rose-500/60'
             } text-white px-4 py-3 rounded-xl shadow-2xl`}
           >
@@ -92,8 +96,8 @@ export const Modal: React.FC<{
   wide?: boolean;
 }> = ({ title, subtitle, onClose, children, footer, wide }) => (
   <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-    <div className={`bg-[#111622] border border-[#1e2638] rounded-2xl w-full ${wide ? 'max-w-4xl' : 'max-w-md'} overflow-hidden shadow-2xl flex flex-col max-h-[90vh]`}>
-      <div className="px-6 py-4 border-b border-[#1e2638] flex items-center justify-between bg-[#151c2c]">
+    <div className={`bg-[var(--mv-card,#111622)] border border-[var(--mv-line,#1e2638)] rounded-2xl w-full ${wide ? 'max-w-4xl' : 'max-w-md'} overflow-hidden shadow-2xl flex flex-col max-h-[90vh]`}>
+      <div className="px-6 py-4 border-b border-[var(--mv-line,#1e2638)] flex items-center justify-between bg-[var(--mv-raised,#151c2c)]">
         <div>
           <h3 className="text-base font-bold text-white">{title}</h3>
           {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
@@ -103,19 +107,21 @@ export const Modal: React.FC<{
         </button>
       </div>
       <div className="p-6 space-y-4 overflow-y-auto">{children}</div>
-      {footer && <div className="px-6 py-4 bg-[#0d121c] border-t border-[#1e2638] flex items-center justify-end space-x-3">{footer}</div>}
+      {footer && <div className="px-6 py-4 bg-[var(--mv-deep,#0d121c)] border-t border-[var(--mv-line,#1e2638)] flex items-center justify-end space-x-3">{footer}</div>}
     </div>
   </div>
 );
 
 export const btn = {
   primary: 'px-5 py-2 text-xs font-bold text-white bg-[#e63946] hover:bg-[#d62839] disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-all flex items-center justify-center space-x-1.5 shadow-md shadow-rose-950/30',
+  // The player app's main action: a light pill, as on the trading screens.
+  light: 'px-5 py-2 text-xs font-semibold text-[#111214] bg-gradient-to-b from-white to-slate-300 hover:to-slate-200 border border-white/60 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl transition-all flex items-center justify-center space-x-1.5 shadow-[0_0_0_3px_rgba(255,255,255,0.06)]',
   green: 'px-5 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-all flex items-center justify-center space-x-1.5',
   ghost: 'px-4 py-2 text-xs text-slate-300 hover:text-white rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50',
-  outline: 'py-2 px-3 bg-[#161d2d] hover:bg-[#1f293d] border border-[#232f48] rounded-lg text-xs font-semibold text-slate-200 flex items-center justify-center space-x-2 transition-colors disabled:opacity-40 disabled:cursor-not-allowed',
-  small: 'flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-slate-300 bg-[#161d2b] border border-[#243046] hover:bg-[#1c2538] hover:text-white rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed',
+  outline: 'py-2 px-3 bg-[var(--mv-raised,#161d2d)] hover:bg-[var(--mv-hover,#1f293d)] border border-[var(--mv-edge,#232f48)] rounded-lg text-xs font-semibold text-slate-200 flex items-center justify-center space-x-2 transition-colors disabled:opacity-40 disabled:cursor-not-allowed',
+  small: 'flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-slate-300 bg-[var(--mv-raised,#161d2b)] border border-[var(--mv-edge,#243046)] hover:bg-[var(--mv-hover,#1c2538)] hover:text-white rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed',
 };
-export const input = 'w-full bg-[#161d2d] border border-[#222e47] rounded-lg px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500';
+export const input = 'w-full bg-[var(--mv-raised,#161d2d)] border border-[var(--mv-edge,#222e47)] rounded-lg px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500';
 export const card = 'rounded-xl bg-[#111622] border border-[#1e2638] shadow-sm';
 
 export const ErrorNote: React.FC<{ text: string | null | undefined }> = ({ text }) =>
@@ -135,7 +141,7 @@ export const Pager: React.FC<{ page: number; pages: number; total: number; perPa
   const to = Math.min(total, page * perPage);
   const nums = Array.from(new Set([1, page - 1, page, page + 1, pages])).filter((n) => n >= 1 && n <= pages).sort((a, b) => a - b);
   return (
-    <div className="px-5 py-3 border-t border-[#1b2233] flex items-center justify-between text-xs text-slate-400">
+    <div className="px-5 py-3 border-t border-[var(--mv-rule,#1b2233)] flex items-center justify-between text-xs text-slate-400">
       <span>Showing {from}–{to} of {total} {label}</span>
       <div className="flex items-center space-x-1">
         <button disabled={page <= 1} onClick={() => onPage(page - 1)} className="p-1.5 rounded hover:bg-slate-800 disabled:opacity-30" aria-label="Previous page">
@@ -144,7 +150,7 @@ export const Pager: React.FC<{ page: number; pages: number; total: number; perPa
         {nums.map((n, i) => (
           <React.Fragment key={n}>
             {i > 0 && n - nums[i - 1] > 1 && <span className="px-1">…</span>}
-            <button onClick={() => onPage(n)} aria-current={n === page ? 'page' : undefined} className={`min-w-[1.75rem] h-7 rounded font-semibold ${n === page ? 'bg-[#371920] text-white border border-[#58212a]' : 'hover:bg-slate-800'}`}>
+            <button onClick={() => onPage(n)} aria-current={n === page ? 'page' : undefined} className={`min-w-[1.75rem] h-7 rounded font-semibold ${n === page ? 'bg-[var(--mv-active,#371920)] text-white border border-[var(--mv-active-line,#58212a)]' : 'hover:bg-slate-800'}`}>
               {n}
             </button>
           </React.Fragment>

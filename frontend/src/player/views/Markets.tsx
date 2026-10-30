@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from 'react';
-import { ChevronDown, ChevronRight, Search } from 'lucide-react';
+import { ChevronRight, Search } from 'lucide-react';
 import { Company, MarketStatus } from '../../shared/types';
 import { pct, rupees } from '../../shared/format';
 import { EmptyRow, TickerBadge } from '../../shared/ui';
-import { AnnouncementCard, RoundBadge } from '../market';
+import { AnnouncementCard, RoundBadge, PageTitle } from '../market';
 
 export const MarketsView: React.FC<{
   status: MarketStatus | null;
@@ -25,46 +25,46 @@ export const MarketsView: React.FC<{
   return (
     <div className="space-y-6 pb-12 animate-fadeIn">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Markets</h1>
-          <p className="text-sm text-slate-400 mt-1">All companies participating in the simulation</p>
-        </div>
+        <PageTitle title="Markets" caption="All companies participating in the simulation" />
         <div className="flex flex-wrap items-center gap-3">
           <RoundBadge status={status} />
           <AnnouncementCard message={status?.message} className="!p-2.5 max-w-sm hidden sm:flex" />
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center gap-3">
-        <div className="relative flex-1 w-full">
+      <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+        <div role="tablist" aria-label="Sector" className="flex items-center gap-1 overflow-x-auto -mx-1 px-1 py-1 min-w-0 lg:flex-1">
+          {sectors.map((s) => (
+            <button
+              key={s}
+              role="tab"
+              aria-selected={sector === s}
+              onClick={() => setSector(s)}
+              className={`px-5 py-2 rounded-full text-[15px] whitespace-nowrap transition-colors ${
+                sector === s ? 'border-2 border-white text-white font-medium' : 'border-2 border-transparent text-slate-400 hover:text-white'
+              }`}
+            >
+              {s === 'All Sectors' ? 'All' : s}
+            </button>
+          ))}
+        </div>
+        <div className="relative w-full lg:w-80 shrink-0">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search company name, symbol or CEO..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#111622] border border-[#1e2638] rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+            className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-white/25 focus:bg-white/[0.06] transition-colors"
           />
-        </div>
-        <div className="relative w-full sm:w-56 shrink-0">
-          <select
-            value={sector}
-            onChange={(e) => setSector(e.target.value)}
-            className="w-full appearance-none bg-[#111622] border border-[#1e2638] rounded-xl px-4 py-2.5 text-sm font-medium text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer pr-10"
-          >
-            {sectors.map((s) => (
-              <option key={s} value={s} className="bg-[#111622] text-white">{s}</option>
-            ))}
-          </select>
-          <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
       </div>
 
-      <div className="rounded-xl bg-[#111622] border border-[#1e2638] overflow-hidden shadow-sm">
+      <div className="rounded-2xl bg-white/[0.025] border border-white/[0.07] backdrop-blur-sm overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse monopoly-table">
             <thead>
-              <tr className="text-xs font-semibold text-slate-400 border-b border-[#1b2233]">
+              <tr className="text-xs font-medium text-slate-500 border-b border-white/[0.06]">
                 <th className="py-3.5 px-6">Symbol</th>
                 <th className="py-3.5 px-5">Company</th>
                 <th className="hidden sm:table-cell py-3.5 px-5">CEO</th>
@@ -74,11 +74,11 @@ export const MarketsView: React.FC<{
                 <th className="py-3.5 px-6"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#171e2c] text-sm">
+            <tbody className="divide-y divide-white/[0.04] text-sm">
               {companies && filtered.length === 0 && <EmptyRow cols={7} text="No company matches your search." />}
               {!companies && <EmptyRow cols={7} text="Loading prices…" />}
               {filtered.map((c) => (
-                <tr key={c.id} onClick={() => onSelect(c.id)} className="hover:bg-[#161d2d] transition-colors cursor-pointer group">
+                <tr key={c.id} onClick={() => onSelect(c.id)} className="hover:bg-white/[0.03] transition-colors cursor-pointer group">
                   <td className="py-3.5 px-6"><TickerBadge ticker={c.ticker} industry={c.industry} /></td>
                   <td className="py-3.5 px-5 font-semibold text-white whitespace-nowrap group-hover:text-emerald-400 transition-colors">
                     {c.name}

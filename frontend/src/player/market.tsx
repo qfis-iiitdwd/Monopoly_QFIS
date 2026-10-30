@@ -46,7 +46,7 @@ export const Countdown: React.FC<{ status: MarketStatus | null; className?: stri
 export const RoundBadge: React.FC<{ status: MarketStatus | null }> = ({ status }) => {
   const d = describe(status);
   return (
-    <div className="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-[#111622] border border-[#1e2638] text-xs font-semibold">
+    <div className="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-[#131417] border border-[#24262b] text-xs font-semibold">
       <span className="text-slate-300">{d.round}</span>
       <span className="text-slate-600">|</span>
       <span className={`${d.tone} font-bold`}>{d.label}</span>
@@ -71,3 +71,15 @@ export const AnnouncementCard: React.FC<{ message: string | undefined; className
     </div>
   );
 };
+
+/** The page heading as a breadcrumb: "Monopoly / Trading", with an optional caption below. */
+export const PageTitle: React.FC<{ title: string; caption?: string }> = ({ title, caption }) => (
+  <div className="min-w-0">
+    <h1 className="text-[26px] sm:text-[30px] font-normal tracking-tight leading-tight">
+      <span className="text-slate-500">Monopoly</span>
+      <span className="text-slate-600 mx-3 font-light">/</span>
+      <span className="text-white">{title}</span>
+    </h1>
+    {caption && <p className="text-sm text-slate-500 mt-1.5">{caption}</p>}
+  </div>
+);

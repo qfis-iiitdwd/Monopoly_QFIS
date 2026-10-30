@@ -2,12 +2,12 @@ import React from 'react';
 import { ArrowLeftRight, Home, Landmark, LogOut } from 'lucide-react';
 import { LogoBars, Spinner } from '../shared/ui';
 
-export type NavTab = 'dashboard' | 'trading' | 'markets';
+export type NavTab = 'dashboard' | 'trading' | 'market';
 
 export const NAV = [
   { id: 'dashboard' as NavTab, label: 'Dashboard', icon: Home },
   { id: 'trading' as NavTab, label: 'Trading', icon: ArrowLeftRight },
-  { id: 'markets' as NavTab, label: 'Markets', icon: Landmark },
+  { id: 'market' as NavTab, label: 'Markets', icon: Landmark },
 ];
 
 const link = 'w-full flex items-center px-3 py-2.5 rounded-xl text-[15px] transition-colors duration-150';

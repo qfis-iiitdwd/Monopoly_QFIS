@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS teams (
   id                 SERIAL PRIMARY KEY,
   name               TEXT NOT NULL UNIQUE,
   access_identifier  TEXT NOT NULL UNIQUE,
-  password_hash      TEXT NOT NULL,
+  password           TEXT NOT NULL,      -- plain text, lowercase: organisers hand it out and look it up
   cash               BIGINT NOT NULL CHECK (cash >= 0),
   realized_pnl       BIGINT NOT NULL DEFAULT 0,
   is_active          BOOLEAN NOT NULL DEFAULT true,
@@ -141,6 +141,16 @@ CREATE TABLE IF NOT EXISTS ledger_entries (
   created_by        TEXT NOT NULL DEFAULT 'system'
 );
 CREATE INDEX IF NOT EXISTS ledger_team_idx ON ledger_entries (team_id, id);
+
+-- Team passwords are stored in plain text (the admin password stays hashed). Databases from before
+-- that change had them scrypt-hashed in password_hash; those teams can't log in until re-seeded.
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns
+              WHERE table_schema = 'public' AND table_name = 'teams' AND column_name = 'password_hash') THEN
+    ALTER TABLE teams RENAME COLUMN password_hash TO password;
+  END IF;
+END $$;
 
 -- Story details shown to players: the CEO and free-form facts ("Founded": "1998", ...).
 ALTER TABLE companies ADD COLUMN IF NOT EXISTS ceo TEXT NOT NULL DEFAULT '';

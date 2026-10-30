@@ -56,6 +56,19 @@ function validDetails(d) {
 }
 
 function validateConfig(cfg, settings) {
+  const t = cfg.teams || {};
+  if (t.names) {
+    const seen = new Set();
+    for (const n of t.names) {
+      if (typeof n !== 'string' || !n.trim()) throw new Error('teams.names has an empty name');
+      if (seen.has(n.toLowerCase())) throw new Error(`duplicate team name "${n}"`);
+      seen.add(n.toLowerCase());
+    }
+  }
+  if (t.passwords) {
+    if (!t.names || t.passwords.length !== t.names.length) throw new Error('teams.passwords must list one password per entry in teams.names');
+    if (t.passwords.some((p) => typeof p !== 'string' || p.trim().length < 4)) throw new Error('teams.passwords: every password needs 4+ characters');
+  }
   const tickers = new Set();
   const industries = new Set();
   for (const c of cfg.companies) {
@@ -139,16 +152,18 @@ async function seed(cfg, opts = {}) {
       [opts.adminUsername || 'admin', passwords.hash(adminPassword)]);
 
     const tcfg = cfg.teams || {};
-    const count = tcfg.count || 50;
+    const count = tcfg.count || (tcfg.names && tcfg.names.length) || 50;
     const credentials = [];
     for (let i = 1; i <= count; i++) {
       const num = String(i).padStart(2, '0');
       const name = (tcfg.names && tcfg.names[i - 1]) || `${tcfg.name_prefix || 'Team'} ${num}`;
       const ident = `${tcfg.id_prefix || 'team'}${num}`;
-      const password = opts.fixedPasswords ? `pw-${ident}` : randomPassword();
+      // teams.passwords (optional) gives each team the password the organisers chose, in names order.
+      // Team passwords are case-insensitive: stored lowercase, and login lowercases what is typed.
+      const password = ((tcfg.passwords && tcfg.passwords[i - 1]) || (opts.fixedPasswords ? `pw-${ident}` : randomPassword())).trim().toLowerCase();
       const { rows: [team] } = await c.query(
-        'INSERT INTO teams (name, access_identifier, password_hash, cash) VALUES ($1, $2, $3, $4) RETURNING id',
-        [name, ident, passwords.hash(password, passwords.TEAM_N), settings.starting_cash]);
+        'INSERT INTO teams (name, access_identifier, password, cash) VALUES ($1, $2, $3, $4) RETURNING id',
+        [name, ident, password, settings.starting_cash]);
       await c.query(
         `INSERT INTO ledger_entries (team_id, transaction_type, amount, balance_after, memo) VALUES ($1, 'initial_deposit', $2, $2, 'Starting capital')`,
         [team.id, settings.starting_cash]);

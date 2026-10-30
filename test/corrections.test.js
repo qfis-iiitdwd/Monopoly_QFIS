@@ -575,7 +575,7 @@ test('full event with corrections matches an independent replay of every price a
 });
 
 // ---------------------------------------------------------------------------------------------
-test('login: remembered passwords stop working after a reset; a rush of identical logins shares one check', async () => {
+test('login: any case works, a reset password replaces the old one at once, a rush of logins costs no hashing', async () => {
   await fresh();
   const auth = require('../src/auth');
   const passwords = require('../src/passwords');
@@ -586,12 +586,12 @@ test('login: remembered passwords stop working after a reset; a rush of identica
   ]);
   assert.equal(rush.slice(0, 30).filter((r) => r.status === 'fulfilled').length, 30);
   assert.ok(rush.slice(30).every((r) => r.status === 'rejected' && r.reason.status === 401));
-  // Cached: no scrypt queue builds up for repeat logins.
-  await Promise.all(Array.from({ length: 50 }, () => auth.loginTeam('TEAM05 ', 'pw-team05')));
+  // Team passwords are plain text: no scrypt queue builds up, and capitals don't matter.
+  await Promise.all(Array.from({ length: 50 }, () => auth.loginTeam('TEAM05 ', 'PW-Team05')));
   assert.equal(passwords.queueLength(), 0);
-  // Reset (as the admin route does): the old password must fail even though it was cached.
+  // Reset (as the admin route does): the old password fails at once.
   const { rows: [t] } = await db.query(`SELECT id FROM teams WHERE access_identifier = 'team05'`);
-  await db.query('UPDATE teams SET password_hash = $2 WHERE id = $1', [t.id, passwords.hash('brand-new-pw', passwords.TEAM_N)]);
+  await db.query('UPDATE teams SET password = $2 WHERE id = $1', [t.id, 'brand-new-pw']);
   await assert.rejects(auth.loginTeam('team05', 'pw-team05'), (e) => e.status === 401);
   assert.equal((await auth.loginTeam('team05', 'brand-new-pw')).team.id, t.id);
   // A deactivated team cannot log in, cached or not.

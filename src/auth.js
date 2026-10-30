@@ -69,43 +69,23 @@ async function createSession(kind, ids, hours) {
   return token;
 }
 
-// A team's five members (and their laptops and phones) all type the same password. Once it has
-// been verified, later logins with it skip scrypt: the cache holds an HMAC of the password under a
-// per-process random key, tied to the stored hash, so a password reset invalidates it automatically.
-// Identical logins arriving together share one check.
-const VERIFIED_TTL_MS = 6 * 3600 * 1000;
-const cacheKey = crypto.randomBytes(32);
-const verified = new Map();
-const inflight = new Map();
-const digest = (password) => crypto.createHmac('sha256', cacheKey).update(String(password)).digest();
-
-async function verifyTeamPassword(team, password) {
-  const d = digest(password);
-  const hit = verified.get(team.id);
-  if (hit && hit.hash === team.password_hash && hit.until > Date.now() && crypto.timingSafeEqual(hit.d, d)) return true;
-  const flightKey = `${team.id}:${d.toString('base64')}:${team.password_hash}`;
-  let p = inflight.get(flightKey);
-  if (!p) {
-    p = passwords.verify(password, team.password_hash).finally(() => inflight.delete(flightKey));
-    inflight.set(flightKey, p);
-  }
-  let ok;
-  try {
-    ok = await p;
-  } catch (err) {
-    if (err.busy) throw new GameError(err.message, 503, 'busy');
-    throw err;
-  }
-  if (ok) verified.set(team.id, { hash: team.password_hash, d, until: Date.now() + VERIFIED_TTL_MS });
-  return ok;
+// Team passwords are stored in plain text, lowercase (the organisers hand them out and look them
+// up), so a check is a constant-time string comparison: no hashing cost, however many log in at once.
+// The admin password stays scrypt-hashed.
+function teamPasswordMatches(team, password) {
+  const stored = Buffer.from(String(team.password));
+  const given = Buffer.from(password);
+  return stored.length === given.length && crypto.timingSafeEqual(stored, given);
 }
 
 async function loginTeam(identifier, password, memberName) {
   identifier = String(identifier || '').trim().toLowerCase();
+  // Team passwords are case-insensitive (all are stored lowercase; see seed.js).
+  password = String(password || '').trim().toLowerCase();
   const key = 'team:' + identifier;
   checkRate(key);
   const { rows: [team] } = await db.query('SELECT * FROM teams WHERE lower(access_identifier) = $1 AND is_active', [identifier]);
-  const ok = team && (await verifyTeamPassword(team, password));
+  const ok = team && teamPasswordMatches(team, password);
   if (!ok) { noteFailure(key); throw new GameError('Incorrect team ID or password', 401, 'unauthorized'); }
   const { rows: [{ settings }] } = await db.query('SELECT settings FROM game_state WHERE id = 1');
   const hours = settings.session_hours || 14;
@@ -189,5 +169,5 @@ async function logout(req, cookieName) {
 
 module.exports = {
   TEAM_COOKIE, ADMIN_COOKIE, setCookie, loginTeam, loginAdmin, requireTeam, requireAdmin, logout, parseCookies,
-  forgetTeamSessions: (teamId) => { verified.delete(teamId); forgetSessions((s) => s && s.team_id === teamId); },
+  forgetTeamSessions: (teamId) => forgetSessions((s) => s && s.team_id === teamId),
 };

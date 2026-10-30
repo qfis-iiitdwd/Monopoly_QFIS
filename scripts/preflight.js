@@ -68,8 +68,10 @@ const ROOT = path.join(__dirname, '..');
   (gs.status === 'setup' ? ok : warn)(`event status: ${gs.status}${gs.status === 'setup' ? '' : ` (round ${gs.current_round})`}`);
   const { rows: [{ teams }] } = await db.query('SELECT COUNT(*)::int AS teams FROM teams');
   ok(`${teams} teams`);
-  const { rows: [t1] } = await db.query('SELECT access_identifier, password_hash FROM teams ORDER BY id LIMIT 1');
-  if (t1 && await passwords.verify(`pw-${t1.access_identifier}`, t1.password_hash)) fail('teams have TEST passwords (seeded with --test-passwords): re-seed without it');
+  const { rows: [t1] } = await db.query('SELECT access_identifier, password FROM teams ORDER BY id LIMIT 1');
+  const { rows: [{ hashed }] } = await db.query(`SELECT COUNT(*)::int AS hashed FROM teams WHERE password LIKE 'scrypt$%'`);
+  if (hashed) fail(`${hashed} teams still have old hashed passwords and cannot log in: re-seed`);
+  else if (t1 && t1.password === `pw-${t1.access_identifier}`) fail('teams have TEST passwords (seeded with --test-passwords): re-seed without it');
   else ok('team passwords are not the test passwords');
   if (ap) {
     const { rows: [a] } = await db.query('SELECT password_hash FROM admins ORDER BY id LIMIT 1');

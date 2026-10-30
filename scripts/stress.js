@@ -26,7 +26,7 @@ const lat = (xs) => `n=${xs.length} p50=${pctl(xs, 0.5).toFixed(0)}ms p95=${pctl
 const failures = [];
 const notes = [];
 let serverErrors = 0;
-const LEAK = /effective_round|password_hash|scheduled_events|"impacts"|noise_seed|price_script|SCRIPT-R|fundamental_bps/;
+const LEAK = /effective_round|password_hash|"password":|scheduled_events|"impacts"|noise_seed|price_script|SCRIPT-R|fundamental_bps/;
 
 function check(name, cond, detail) {
   console.log(`  ${cond ? 'ok  ' : 'FAIL'} ${name}${detail ? ` — ${detail}` : ''}`);

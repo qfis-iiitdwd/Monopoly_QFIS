@@ -3,7 +3,6 @@ const path = require('path');
 const crypto = require('crypto');
 const express = require('express');
 const db = require('../db');
-const passwords = require('../passwords');
 const auth = require('../auth');
 const market = require('../market');
 const adminOps = require('../admin');
@@ -199,7 +198,7 @@ router.post('/teams/:id/reset-password', h(async (req, res) => {
   const id = intParam(req.params.id, 'id');
   const password = crypto.randomBytes(4).toString('hex');
   await db.tx(async (c) => {
-    const { rowCount } = await c.query('UPDATE teams SET password_hash = $2 WHERE id = $1', [id, passwords.hash(password, passwords.TEAM_N)]);
+    const { rowCount } = await c.query('UPDATE teams SET password = $2 WHERE id = $1', [id, password]);
     if (!rowCount) throw new GameError('Team not found', 404, 'not_found');
     await c.query(`DELETE FROM sessions WHERE team_id = $1`, [id]);
     await audit(c, req.admin.admin_id, 'reset_team_password', req.body && req.body.reason, null, { team_id: id });

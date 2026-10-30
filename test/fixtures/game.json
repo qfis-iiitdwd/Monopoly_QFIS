@@ -1,0 +1,660 @@
+{
+  "_readme": "TEST FIXTURE, safe to commit: the real companies with a made-up price script. Tests use config/game.json when it exists (the secret event config) and fall back to this file in a fresh clone.",
+  "settings": {
+    "total_rounds": 10,
+    "starting_cash_rupees": 10000000,
+    "fee_bps": 10,
+    "max_trades_per_round": 0,
+    "pressure_scale_bps": 300,
+    "pressure_cap_bps": 800,
+    "noise_bps": 0,
+    "noise_seed": "qfis-marketverse-2026",
+    "max_move_up_bps": 6000,
+    "max_move_down_bps": 6000,
+    "min_price_rupees": 1,
+    "max_price_rupees": 100000,
+    "max_reward_rupees": 200000,
+    "players_see_leaderboard": false,
+    "loans": {
+      "enabled": false,
+      "ltv_bps": 5000,
+      "interest_bps_per_round": 200,
+      "max_loan_per_team_rupees": 5000000,
+      "last_borrow_round": 6,
+      "due_round": 8
+    },
+    "sizing": {
+      "float_value_rupees": 50000000,
+      "outstanding_multiple": 4,
+      "max_order_value_rupees": 3000000,
+      "pressure_ref_fraction_bps": 1000
+    }
+  },
+  "teams": {
+    "count": 50,
+    "name_prefix": "Team",
+    "id_prefix": "team"
+  },
+  "companies": [
+    {
+      "ticker": "PEAR",
+      "name": "Pear Technologies",
+      "ceo": "Tim Core",
+      "industry": "Electronics",
+      "price": 240,
+      "shares_outstanding": 100000000,
+      "description": "Consumer electronics, smartphones, laptops, and wearables. Known for premium products and a loyal customer base.",
+      "details": {
+        "CFO": "Luca Maestro"
+      }
+    },
+    {
+      "ticker": "SONG",
+      "name": "Sumsong Electronics",
+      "ceo": "Jong-Hee Haan",
+      "industry": "Electronics",
+      "price": 160,
+      "shares_outstanding": 125000000,
+      "description": "Phones, televisions, displays, and semiconductor components.",
+      "details": {
+        "CFO": "Park Hark-Soo"
+      }
+    },
+    {
+      "ticker": "SONI",
+      "name": "Soni Corporation",
+      "ceo": "Kenichiro Yashida",
+      "industry": "Electronics",
+      "price": 125,
+      "shares_outstanding": 80000000,
+      "description": "Cameras, televisions, audio equipment, and gaming hardware. Entertainment is a major part of its brand.",
+      "details": {
+        "CFO": "Hiroki Tootaki"
+      }
+    },
+    {
+      "ticker": "XIO",
+      "name": "Xiomi Devices",
+      "ceo": "Lei Joon",
+      "industry": "Electronics",
+      "price": 80,
+      "shares_outstanding": 100000000,
+      "description": "Affordable smartphones, smart-home devices, wearables, and connected appliances.",
+      "details": {
+        "COO": "Lu Webing"
+      }
+    },
+    {
+      "ticker": "MCRH",
+      "name": "Microhard Systems",
+      "ceo": "Satya Nandella",
+      "industry": "Software",
+      "price": 210,
+      "shares_outstanding": 100000000,
+      "description": "Enterprise software, operating systems, cloud computing, and productivity tools.",
+      "details": {
+        "CFO": "Amy Wood"
+      }
+    },
+    {
+      "ticker": "GOGL",
+      "name": "Goggle Technologies",
+      "ceo": "Sundar Pichay",
+      "industry": "Software",
+      "price": 195,
+      "shares_outstanding": 100000000,
+      "description": "Search, online advertising, mobile operating systems, video platforms, and cloud services.",
+      "details": {
+        "CFO": "Anant Ashkenazy"
+      }
+    },
+    {
+      "ticker": "ABOD",
+      "name": "Abode Creative",
+      "ceo": "Shantanu Narayan",
+      "industry": "Software",
+      "price": 115,
+      "shares_outstanding": 80000000,
+      "description": "Design software, video editing, digital marketing, and creative subscriptions.",
+      "details": {
+        "CFO": "Dan Durnn"
+      }
+    },
+    {
+      "ticker": "ORAX",
+      "name": "Oraclex Corporation",
+      "ceo": "Clay Maguyork",
+      "industry": "Software",
+      "price": 140,
+      "shares_outstanding": 70000000,
+      "description": "Enterprise databases, business applications, and cloud infrastructure.",
+      "details": {
+        "Chairman": "Larry Ellisonn"
+      }
+    },
+    {
+      "ticker": "TLSA",
+      "name": "Teslex Motors",
+      "ceo": "Elon Dusk",
+      "industry": "Automobiles",
+      "price": 175,
+      "shares_outstanding": 100000000,
+      "description": "Electric vehicles, battery systems, and charging infrastructure. Public sentiment can strongly influence its reputation.",
+      "details": {
+        "CFO": "Vaibhav Taneja"
+      }
+    },
+    {
+      "ticker": "TOYT",
+      "name": "Toyoto Automotive",
+      "ceo": "Koji Satoo",
+      "industry": "Automobiles",
+      "price": 130,
+      "shares_outstanding": 120000000,
+      "description": "Reliable vehicles, hybrid technology, and large-scale manufacturing.",
+      "details": {
+        "Chairman": "Akio Toyoda"
+      }
+    },
+    {
+      "ticker": "BMV",
+      "name": "BMV Motors",
+      "ceo": "Oliver Zips",
+      "industry": "Automobiles",
+      "price": 150,
+      "shares_outstanding": 60000000,
+      "description": "Premium cars and motorcycles targeting buyers who value performance and prestige.",
+      "details": {
+        "CFO": "Walter Mertell"
+      }
+    },
+    {
+      "ticker": "MRCZ",
+      "name": "Mercedez-Benz",
+      "ceo": "Ola Kallenius",
+      "industry": "Automobiles",
+      "price": 120,
+      "shares_outstanding": 70000000,
+      "description": "Luxury vehicles, premium SUVs, and high-end automotive engineering.",
+      "details": {
+        "CFO": "Harald Willhelm"
+      }
+    },
+    {
+      "ticker": "CLSD",
+      "name": "ClosedAI Labs",
+      "ceo": "Pam Allman",
+      "industry": "Artificial Intelligence",
+      "price": 200,
+      "shares_outstanding": 50000000,
+      "description": "Conversational AI, enterprise assistants, and generative models. Growth is balanced by high computing costs.",
+      "details": {
+        "CTO": "Greg Blockman"
+      }
+    },
+    {
+      "ticker": "NVID",
+      "name": "Nvidious Computing",
+      "ceo": "Jensen Hwang",
+      "industry": "Artificial Intelligence",
+      "price": 225,
+      "shares_outstanding": 60000000,
+      "description": "AI accelerators, graphics processors, and high-performance computing systems.",
+      "details": {
+        "CFO": "Colette Kress"
+      }
+    },
+    {
+      "ticker": "ANTH",
+      "name": "Anthropix AI",
+      "ceo": "Dario Amodai",
+      "industry": "Artificial Intelligence",
+      "price": 145,
+      "shares_outstanding": 50000000,
+      "description": "Enterprise AI assistants focused on safety, reliability, and business applications.",
+      "details": {
+        "President": "Daniella Amodai"
+      }
+    },
+    {
+      "ticker": "PRPX",
+      "name": "Perplexio",
+      "ceo": "Aravind Srinivass",
+      "industry": "Artificial Intelligence",
+      "price": 90,
+      "shares_outstanding": 50000000,
+      "description": "AI-powered search and answer engine competing with traditional search platforms.",
+      "details": {
+        "Chief Product Officer": "Johnny Hoo"
+      }
+    },
+    {
+      "ticker": "MIKE",
+      "name": "Mike Athletics",
+      "ceo": "Elliot Hills",
+      "industry": "Lifestyle",
+      "price": 110,
+      "shares_outstanding": 80000000,
+      "description": "Sportswear, running shoes, and athletic equipment. Brand image and celebrity endorsements influence demand.",
+      "details": {
+        "CFO": "Matthew Frenn"
+      }
+    },
+    {
+      "ticker": "ABIB",
+      "name": "Abibas Group",
+      "ceo": "Bjorn Guldenn",
+      "industry": "Lifestyle",
+      "price": 85,
+      "shares_outstanding": 80000000,
+      "description": "Sports footwear, apparel, and accessories, with a strong presence in football and streetwear.",
+      "details": {
+        "CFO": "Harm Ohlmyer"
+      }
+    },
+    {
+      "ticker": "KOLA",
+      "name": "Koca-Kola",
+      "ceo": "James Quincy",
+      "industry": "Lifestyle",
+      "price": 100,
+      "shares_outstanding": 100000000,
+      "description": "Soft drinks and packaged beverages. Sales respond to advertising, distribution, and consumer preferences.",
+      "details": {
+        "CFO": "John Murphey"
+      }
+    },
+    {
+      "ticker": "POP",
+      "name": "Popsi",
+      "ceo": "Ramon Lagarta",
+      "industry": "Lifestyle",
+      "price": 70,
+      "shares_outstanding": 100000000,
+      "description": "Soft drinks and packaged beverages. Sales respond to advertising, distribution, and consumer preferences.",
+      "details": {
+        "CFO": "Silviya Martin"
+      }
+    }
+  ],
+  "rounds": [
+    {
+      "id": 1,
+      "title": "Round 1 (placeholder title)",
+      "duration_seconds": 300,
+      "pdf": "round-01.pdf",
+      "bulletins": [
+        {
+          "title": "Round 1 news segment (placeholder)",
+          "content": "",
+          "affected": ""
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Round 2 (placeholder title)",
+      "duration_seconds": 300,
+      "pdf": "round-02.pdf",
+      "bulletins": [
+        {
+          "title": "Round 2 news segment (placeholder)",
+          "content": "",
+          "affected": ""
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Round 3 (placeholder title)",
+      "duration_seconds": 300,
+      "pdf": "round-03.pdf",
+      "bulletins": [
+        {
+          "title": "Round 3 news segment (placeholder)",
+          "content": "",
+          "affected": ""
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Round 4 (placeholder title)",
+      "duration_seconds": 300,
+      "pdf": "round-04.pdf",
+      "bulletins": [
+        {
+          "title": "Round 4 news segment (placeholder)",
+          "content": "",
+          "affected": ""
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Round 5 (placeholder title)",
+      "duration_seconds": 300,
+      "pdf": "round-05.pdf",
+      "bulletins": [
+        {
+          "title": "Round 5 news segment (placeholder)",
+          "content": "",
+          "affected": ""
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Round 6 (placeholder title)",
+      "duration_seconds": 300,
+      "pdf": "round-06.pdf",
+      "bulletins": [
+        {
+          "title": "Round 6 news segment (placeholder)",
+          "content": "",
+          "affected": ""
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Round 7 (placeholder title)",
+      "duration_seconds": 300,
+      "pdf": "round-07.pdf",
+      "bulletins": [
+        {
+          "title": "Round 7 news segment (placeholder)",
+          "content": "",
+          "affected": ""
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Round 8 (placeholder title)",
+      "duration_seconds": 300,
+      "pdf": "round-08.pdf",
+      "bulletins": [
+        {
+          "title": "Round 8 news segment (placeholder)",
+          "content": "",
+          "affected": ""
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Round 9 (placeholder title)",
+      "duration_seconds": 300,
+      "pdf": "round-09.pdf",
+      "bulletins": [
+        {
+          "title": "Round 9 news segment (placeholder)",
+          "content": "",
+          "affected": ""
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Round 10 (placeholder title)",
+      "duration_seconds": 300,
+      "pdf": "round-10.pdf",
+      "bulletins": [
+        {
+          "title": "Round 10 news segment (placeholder)",
+          "content": "",
+          "affected": ""
+        }
+      ]
+    }
+  ],
+  "events": [],
+  "price_script": {
+    "_readme": "Fixed % move per company per round, in basis points (100 = 1%). Applied at each round's market update; trading pressure is added on top. Imported by scripts/import-moves.js.",
+    "source": "synthetic test moves (NOT the event script)",
+    "imported_at": "2026-10-30T00:00:00.000Z",
+    "moves": {
+      "PEAR": [
+        291,
+        -1033,
+        876,
+        -838,
+        900,
+        -1151,
+        561,
+        -812,
+        1019,
+        472
+      ],
+      "SONG": [
+        1232,
+        1039,
+        1063,
+        -1270,
+        -339,
+        -46,
+        923,
+        -310,
+        345,
+        1386
+      ],
+      "SONI": [
+        -802,
+        1425,
+        -918,
+        1148,
+        913,
+        1317,
+        719,
+        -1133,
+        595,
+        -1365
+      ],
+      "XIO": [
+        -1283,
+        -662,
+        536,
+        -955,
+        -502,
+        -774,
+        -94,
+        887,
+        520,
+        1006
+      ],
+      "MCRH": [
+        -351,
+        1500,
+        168,
+        1226,
+        830,
+        1261,
+        -553,
+        -1143,
+        -224,
+        179
+      ],
+      "GOGL": [
+        1329,
+        -17,
+        1359,
+        51,
+        -625,
+        -1148,
+        -107,
+        -623,
+        -594,
+        -503
+      ],
+      "ABOD": [
+        38,
+        348,
+        -635,
+        484,
+        -602,
+        1324,
+        638,
+        325,
+        -336,
+        856
+      ],
+      "ORAX": [
+        -345,
+        1249,
+        -648,
+        541,
+        954,
+        1406,
+        -541,
+        -228,
+        -68,
+        -1379
+      ],
+      "TLSA": [
+        1219,
+        -849,
+        -113,
+        -416,
+        1443,
+        -879,
+        -41,
+        466,
+        -1070,
+        350
+      ],
+      "TOYT": [
+        208,
+        1133,
+        885,
+        -1395,
+        516,
+        -1255,
+        -977,
+        -854,
+        674,
+        1033
+      ],
+      "BMV": [
+        -1118,
+        -596,
+        -629,
+        374,
+        478,
+        -73,
+        -492,
+        -1080,
+        -63,
+        -1108
+      ],
+      "MRCZ": [
+        -539,
+        -109,
+        710,
+        500,
+        962,
+        -503,
+        143,
+        -838,
+        783,
+        625
+      ],
+      "CLSD": [
+        1336,
+        -461,
+        -1257,
+        1103,
+        -1098,
+        947,
+        315,
+        1476,
+        1333,
+        1209
+      ],
+      "NVID": [
+        1218,
+        644,
+        698,
+        -965,
+        -511,
+        625,
+        -1029,
+        -1150,
+        -1108,
+        -654
+      ],
+      "ANTH": [
+        -1337,
+        829,
+        -260,
+        -898,
+        512,
+        262,
+        765,
+        1207,
+        392,
+        378
+      ],
+      "PRPX": [
+        182,
+        1322,
+        295,
+        -1364,
+        -1183,
+        -692,
+        465,
+        1464,
+        -1367,
+        1484
+      ],
+      "MIKE": [
+        -1119,
+        1195,
+        1071,
+        -604,
+        -190,
+        584,
+        1071,
+        -320,
+        -404,
+        -1053
+      ],
+      "KOLA": [
+        -1004,
+        669,
+        -130,
+        1282,
+        -318,
+        -34,
+        1162,
+        -1392,
+        -1396,
+        -727
+      ],
+      "POP": [
+        -1284,
+        -1471,
+        1460,
+        1336,
+        -1192,
+        463,
+        604,
+        1370,
+        -473,
+        1487
+      ],
+      "ABIB": [
+        930,
+        333,
+        -1326,
+        63,
+        1280,
+        -1185,
+        772,
+        949,
+        -142,
+        -121
+      ]
+    }
+  }
+}

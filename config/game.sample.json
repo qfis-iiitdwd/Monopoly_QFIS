@@ -1,0 +1,163 @@
+{
+  "_readme": "SECRET: contains future market events. Never place this file under public/. Prices are in RUPEES here; the seed converts to paise. Impacts are basis points (100 bps = 1%). A company entry in an event REPLACES its industry entry for that event (use it for mitigations). Missing company sizing fields are derived from settings.sizing.",
+
+  "settings": {
+    "total_rounds": 10,
+    "starting_cash_rupees": 10000000,
+    "fee_bps": 10,
+    "max_trades_per_round": 0,
+    "pressure_scale_bps": 300,
+    "pressure_cap_bps": 800,
+    "noise_bps": 50,
+    "noise_seed": "qfis-marketverse-2026",
+    "max_move_up_bps": 6000,
+    "max_move_down_bps": 6000,
+    "min_price_rupees": 1,
+    "max_price_rupees": 100000,
+    "max_reward_rupees": 200000,
+    "loans": {
+      "enabled": false,
+      "ltv_bps": 5000,
+      "interest_bps_per_round": 200,
+      "max_loan_per_team_rupees": 5000000,
+      "last_borrow_round": 6,
+      "due_round": 8
+    },
+    "sizing": {
+      "float_value_rupees": 50000000,
+      "outstanding_multiple": 4,
+      "max_order_value_rupees": 3000000,
+      "pressure_ref_fraction_bps": 1000
+    }
+  },
+
+  "teams": {
+    "count": 50,
+    "name_prefix": "Team",
+    "id_prefix": "team"
+  },
+
+  "companies": [
+    { "ticker": "BYTE", "name": "Byteswallow Technologies", "industry": "Technology", "price": 1200,
+      "description": "Cloud software giant whose servers famously run on filter coffee. Sells subscriptions to everything, including subscriptions." },
+    { "ticker": "QBIT", "name": "Quanta Chips Ltd", "industry": "Technology", "price": 850,
+      "description": "Semiconductor maker dependent on imported rare-earth metals. CEO collects warehouses as a hobby." },
+    { "ticker": "MEME", "name": "Memestream Media", "industry": "Media & Telecom", "price": 140,
+      "description": "Short-video and satire network. Revenue rises whenever anyone else has a bad day." },
+    { "ticker": "BABL", "name": "Tower of Babble Telecom", "industry": "Media & Telecom", "price": 95,
+      "description": "Mobile network with the most towers and the fewest working calls. Highly sensitive to spectrum regulation." },
+    { "ticker": "SOLR", "name": "Suryavanshi Solar Power", "industry": "Energy", "price": 320,
+      "description": "Renewable producer. Panels use rare-earth components; profits follow both sunshine and subsidies." },
+    { "ticker": "CRUD", "name": "Crude Awakening Petroleum", "industry": "Energy", "price": 610,
+      "description": "Oil explorer and refiner. Benefits when crude prices rise, suffers when anyone says 'green'." },
+    { "ticker": "GRID", "name": "Gridlock Power Utilities", "industry": "Energy", "price": 180,
+      "description": "Regulated electricity distributor. Boring, steady, occasionally blacked out." },
+    { "ticker": "DOSA", "name": "DosaDash Foods", "industry": "Consumer", "price": 410,
+      "description": "Food-delivery app that promises a dosa in 9 minutes. Burns cash, gains users." },
+    { "ticker": "CHAI", "name": "Chaiwala Brands", "industry": "Consumer", "price": 260,
+      "description": "Packaged tea and snacks. Rural demand depends heavily on the monsoon." },
+    { "ticker": "KURT", "name": "Kurta Kraft Apparel", "industry": "Consumer", "price": 75,
+      "description": "Textile and apparel maker. Buys most of its cotton from a single region." },
+    { "ticker": "PILL", "name": "PillPop Pharma", "industry": "Healthcare", "price": 940,
+      "description": "Generic-drug exporter with a large but ageing product portfolio." },
+    { "ticker": "HEAL", "name": "HealHub Hospitals", "industry": "Healthcare", "price": 1500,
+      "description": "Hospital chain. Stable cash flows, expanding into tier-2 cities." },
+    { "ticker": "GENE", "name": "Genomix Biolabs", "industry": "Healthcare", "price": 230,
+      "description": "Biotech start-up with one blockbuster candidate in late-stage trials. Very high risk.",
+      "loan_eligible": false },
+    { "ticker": "PVSB", "name": "Paisa Vasool Bank", "industry": "Finance", "price": 520,
+      "description": "Mid-sized private bank. Earns more when interest rates rise; large exposure to real-estate loans." },
+    { "ticker": "HODL", "name": "Hodl Finserv", "industry": "Finance", "price": 60,
+      "description": "Fintech lender and digital wallet. Growth story; dislikes regulation and rate hikes.",
+      "loan_eligible": false },
+    { "ticker": "BIMA", "name": "Bima Bharosa Insurance", "industry": "Finance", "price": 700,
+      "description": "General insurer. Pays out after disasters, invests premiums in bonds." },
+    { "ticker": "RAIL", "name": "Rail Rocket Infra", "industry": "Infrastructure", "price": 340,
+      "description": "Builds railway corridors on government contracts. Debt-heavy." },
+    { "ticker": "CMNT", "name": "Concrete Dreams Cement", "industry": "Infrastructure", "price": 480,
+      "description": "Cement producer. Demand tracks construction spending; energy-intensive kilns." },
+    { "ticker": "JETL", "name": "Jet Lag Airways", "industry": "Transport", "price": 150,
+      "description": "Low-cost airline. Fuel is its biggest cost; unions are its second biggest." },
+    { "ticker": "SHIP", "name": "Sagar Shipping & Logistics", "industry": "Transport", "price": 290,
+      "description": "Container shipping and ports. Gains when trade routes are disrupted elsewhere — sometimes." }
+  ],
+
+  "rounds": [
+    { "id": 1, "title": "The Daily Dalal — Vol. 1: Monsoon Mania", "duration_seconds": 300, "pdf": "round-01.pdf",
+      "bulletins": [
+        { "title": "Met department: monsoon to be 'embarrassingly generous'", "content": "Rural consumption stocks rally; Chaiwala Brands leads.", "affected": "Consumer, CHAI" }
+      ] },
+    { "id": 2, "title": "The Daily Dalal — Vol. 2: Dosa Wars", "duration_seconds": 300, "pdf": "round-02.pdf",
+      "bulletins": [
+        { "title": "DosaDash posts first-ever quarterly profit", "content": "Analysts drop their filter coffee. Food-delivery rival stocks unaffected.", "affected": "DOSA" }
+      ] },
+    { "id": 3, "title": "The Daily Dalal — Vol. 3: The Governor Clears His Throat", "duration_seconds": 300, "pdf": "round-03.pdf",
+      "bulletins": [
+        { "title": "Reserved Bank of Fictionia hikes rates by 75 bps", "content": "Banks cheer; borrowers and builders sulk.", "affected": "Finance, Infrastructure, PVSB, HODL" }
+      ] },
+    { "id": 4, "title": "The Daily Dalal — Vol. 4: Rare Earth, Rare Temper", "duration_seconds": 300, "pdf": "round-04.pdf",
+      "bulletins": [
+        { "title": "Zanzibaria bans rare-earth exports overnight", "content": "Chip and solar makers scramble. Quanta Chips' stockpile softens the blow.", "affected": "Technology, QBIT, SOLR" }
+      ] },
+    { "id": 5, "title": "The Daily Dalal — Vol. 5: Crude Awakening", "duration_seconds": 300, "pdf": "round-05.pdf",
+      "bulletins": [
+        { "title": "Crude spikes 30% after pipeline 'misplaced'", "content": "Oil producers gush; airlines and shippers gasp.", "affected": "Energy, CRUD, JETL, SHIP" }
+      ] },
+    { "id": 6, "title": "The Daily Dalal — Vol. 6: Miracle Molecule", "duration_seconds": 300, "pdf": "round-06.pdf",
+      "bulletins": [
+        { "title": "Genomix wonder-drug clears final trial", "content": "Genomix soars; PillPop's competing generic loses its shine.", "affected": "GENE, PILL" }
+      ] },
+    { "id": 7, "title": "The Daily Dalal — Vol. 7: Can You Hear Me Now?", "duration_seconds": 300, "pdf": "round-07.pdf",
+      "bulletins": [
+        { "title": "Spectrum auction scandal engulfs Tower of Babble", "content": "Licences frozen. Memestream's ratings explode covering it.", "affected": "BABL, MEME" }
+      ] },
+    { "id": 8, "title": "The Daily Dalal — Vol. 8: Budget Bonanza", "duration_seconds": 300, "pdf": "round-08.pdf",
+      "bulletins": [
+        { "title": "Finance minister unveils record infrastructure budget", "content": "Rail and cement order books overflow; power distributors get grid upgrades.", "affected": "Infrastructure, RAIL, CMNT, GRID" }
+      ] },
+    { "id": 9, "title": "The Daily Dalal — Vol. 9: Threadbare", "duration_seconds": 300, "pdf": "round-09.pdf",
+      "bulletins": [
+        { "title": "Pink bollworm wipes out cotton belt", "content": "Kurta Kraft's input costs balloon. Separately, the airline pilots' strike ends.", "affected": "KURT, JETL" }
+      ] },
+    { "id": 10, "title": "The Daily Dalal — Vol. 10: The Final Audit", "duration_seconds": 300, "pdf": "round-10.pdf",
+      "bulletins": [
+        { "title": "Auditors find Paisa Vasool Bank's real-estate book 'creatively valued'", "content": "Bank stocks slide; Hodl's digital deposits surge as customers flee.", "affected": "Finance, PVSB, BIMA, HODL" }
+      ] }
+  ],
+
+  "events": [
+    { "id": "E01-monsoon", "name": "Generous monsoon", "clue_round": 1, "effective_round": 1,
+      "industries": { "Consumer": 300 }, "companies": { "CHAI": 600 },
+      "notes": "Weather page hints; immediate effect." },
+    { "id": "E02-dosa-profit", "name": "DosaDash turns profitable", "clue_round": 1, "effective_round": 2,
+      "companies": { "DOSA": 900 },
+      "notes": "R1 interview: CEO says 'next quarter will surprise even my mother'." },
+    { "id": "E03-rate-hike", "name": "Rate hike", "clue_round": 2, "effective_round": 3,
+      "industries": { "Finance": 300, "Infrastructure": -500 }, "companies": { "HODL": -600, "BIMA": 100 },
+      "notes": "R2: governor 'concerned about inflation' in a cricket-commentary column." },
+    { "id": "E04-rare-earth", "name": "Rare-earth export ban", "clue_round": 1, "effective_round": 4,
+      "industries": { "Technology": -1200 }, "companies": { "QBIT": -400, "SOLR": -800 },
+      "notes": "R1: QBIT CEO buying warehouses (mitigation). R3: Zanzibaria border tensions." },
+    { "id": "E05-oil-spike", "name": "Crude price spike", "clue_round": 3, "effective_round": 5,
+      "industries": { "Energy": 200, "Transport": -1000 }, "companies": { "CRUD": 1200, "JETL": -1400, "GRID": -200 },
+      "notes": "R3/R4: pipeline maintenance gossip on the horoscope page." },
+    { "id": "E06-gene-trial", "name": "Genomix trial success", "clue_round": 2, "effective_round": 6,
+      "companies": { "GENE": 2500, "PILL": -300 },
+      "notes": "R2 and R4: lab interns spotted celebrating; R5 sceptic op-ed (misleading)." },
+    { "id": "E07-spectrum", "name": "Spectrum scandal", "clue_round": 5, "effective_round": 7,
+      "companies": { "BABL": -1500, "MEME": 400 },
+      "notes": "R5: anonymous letter about auction irregularities." },
+    { "id": "E08-budget", "name": "Infrastructure budget", "clue_round": 6, "effective_round": 8,
+      "industries": { "Infrastructure": 1000 }, "companies": { "CMNT": 1200, "GRID": 500 },
+      "notes": "R6: finance ministry orders 10,000 hard hats." },
+    { "id": "E09-cotton", "name": "Cotton crop failure", "clue_round": 6, "effective_round": 9,
+      "companies": { "KURT": -1500 },
+      "notes": "R6 agriculture brief mentions pests in the single region KURT sources from." },
+    { "id": "E09b-strike-ends", "name": "Airline strike resolved", "clue_round": 8, "effective_round": 9,
+      "companies": { "JETL": 800 },
+      "notes": "R8: union leader photographed at the CEO's birthday party." },
+    { "id": "E10-bank-audit", "name": "Bank audit scandal", "clue_round": 7, "effective_round": 10,
+      "industries": { "Finance": -400 }, "companies": { "PVSB": -1800, "HODL": 600 },
+      "notes": "R3 profile: PVSB's large real-estate exposure. R7: resignation of PVSB's auditor." }
+  ]
+}

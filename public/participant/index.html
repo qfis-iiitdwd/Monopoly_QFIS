@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>MarketVerse Trader</title>
+  <meta name="theme-color" content="#1f4fd1">
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div id="login" class="login hidden">
+    <form id="login-form" class="card stack" autocomplete="on">
+      <div>
+        <div class="brand">Q-FIS <b>MarketVerse</b></div>
+        <p class="muted small">Log in with your team's ID and password. Everyone on your team shares one portfolio.</p>
+      </div>
+      <div><label for="l-team">Team ID</label><input id="l-team" name="username" autocapitalize="none" autocomplete="username" required placeholder="team07"></div>
+      <div><label for="l-pass">Team password</label><input id="l-pass" name="password" type="password" autocomplete="current-password" required></div>
+      <div><label for="l-name">Your name (optional, shown on your team's trades)</label><input id="l-name" maxlength="40" autocomplete="name"></div>
+      <div id="login-error" class="banner down hidden"></div>
+      <button class="primary" type="submit">Enter the market</button>
+    </form>
+  </div>
+
+  <div id="app" class="hidden">
+    <header class="topbar">
+      <div class="spread">
+        <div>
+          <div class="team-name" id="team-name">—</div>
+          <div class="muted small" id="round-label">—</div>
+        </div>
+        <div class="right">
+          <div id="phase-chip" class="chip"><span class="dot"></span><span>—</span></div>
+          <div id="countdown" class="countdown num"></div>
+        </div>
+      </div>
+      <div id="global-banner" class="banner warn hidden"></div>
+      <div id="offline-banner" class="banner down hidden">Connection lost — retrying. Trades already confirmed are safe.</div>
+    </header>
+    <main id="view" class="view"></main>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#/home" data-tab="home"><span>Portfolio</span></a>
+      <a href="#/market" data-tab="market"><span>Market</span></a>
+      <a href="#/news" data-tab="news"><span>News</span></a>
+      <a href="#/history" data-tab="history"><span>History</span></a>
+      <a href="#/ranks" data-tab="ranks"><span>Ranks</span></a>
+    </nav>
+  </div>
+
+  <div id="sheet-backdrop" class="sheet-backdrop hidden"></div>
+  <div id="sheet" class="sheet hidden" role="dialog" aria-modal="true"></div>
+
+  <script src="/shared/common.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

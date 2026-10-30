@@ -1,0 +1,13 @@
+# Caddy obtains and renews the HTTPS certificate for $DOMAIN automatically (the domain's DNS must
+# point at this server, and ports 80 and 443 must be open). With DOMAIN=localhost it uses a local
+# self-signed certificate instead, for testing.
+{$DOMAIN} {
+	encode gzip
+	header Strict-Transport-Security "max-age=31536000"
+	reverse_proxy app:3000 {
+		# The app never takes longer than 15 s (it answers 503 instead).
+		transport http {
+			read_timeout 30s
+		}
+	}
+}

@@ -1,0 +1,16 @@
+.git
+node_modules
+**/node_modules
+public/app
+frontend/*.tsbuildinfo
+backups
+test
+config
+papers
+media
+*.csv
+*.xlsx
+.env
+.env.*
+!.env.example
+*.md

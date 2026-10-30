@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: marketverse
+      POSTGRES_PASSWORD: marketverse
+      POSTGRES_DB: marketverse
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marketverse"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://marketverse:marketverse@db:5432/marketverse
+      PORT: "3000"
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me-now}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./papers:/app/papers
+      - ./media:/app/media
+      - ./config:/app/config
+    profiles: ["full"]
+
+volumes:
+  pgdata:

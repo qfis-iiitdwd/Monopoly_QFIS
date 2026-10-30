@@ -1,0 +1,26 @@
+{
+  "name": "qfis-marketverse",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Q-FIS MarketVerse - newspaper-driven fictional stock market simulation",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "db:up": "docker compose up -d db",
+    "seed": "node scripts/seed.js",
+    "test": "node --test --test-concurrency=1 test/*.test.js",
+    "loadtest": "node scripts/loadtest.js",
+    "stress": "node scripts/stress.js",
+    "laptops": "node scripts/laptops.js",
+    "preflight": "node scripts/preflight.js",
+    "backup": "sh scripts/backup.sh",
+    "restore": "sh scripts/restore.sh"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  }
+}

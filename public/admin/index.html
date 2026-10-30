@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarketVerse Control Room</title>
+  <link rel="stylesheet" href="/shared/base.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div id="login" class="login hidden">
+    <form id="login-form" class="card stack">
+      <h1>MarketVerse Control Room</h1>
+      <div><label for="a-user">Username</label><input id="a-user" autocomplete="username" value="admin"></div>
+      <div><label for="a-pass">Password</label><input id="a-pass" type="password" autocomplete="current-password"></div>
+      <div id="login-error" class="banner down hidden"></div>
+      <button class="primary">Log in</button>
+    </form>
+  </div>
+  <div id="app" class="hidden">
+    <header class="bar">
+      <div class="row"><b>MarketVerse Control Room</b><span id="hdr-state" class="chip">—</span><span id="hdr-clock" class="num muted small"></span></div>
+      <nav class="row" id="tabs">
+        <button data-tab="control" class="on">Control</button>
+        <button data-tab="update">Market update</button>
+        <button data-tab="teams">Teams</button>
+        <button data-tab="companies">Companies</button>
+        <button data-tab="orders">Orders</button>
+        <button data-tab="events">Events &amp; news</button>
+        <button data-tab="money">Rewards &amp; corrections</button>
+        <button data-tab="health">Audit &amp; health</button>
+      </nav>
+    </header>
+    <main id="main" class="main"></main>
+  </div>
+  <div id="toast" class="toast hidden"></div>
+  <script src="/shared/common.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

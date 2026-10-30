@@ -1,0 +1,42 @@
+# Dependencies and build output
+node_modules/
+public/app/
+*.tsbuildinfo
+.vite/
+
+# SECRET: the event config holds the future price script. Commit only the sample / test fixture.
+config/*
+!config/game.sample.json
+
+# Generated team logins, database dumps, organiser spreadsheets
+credentials*.csv
+backups/*
+!backups/.gitkeep
+*.xlsx
+*.xls
+*.csv
+!test/fixtures/*.csv
+
+# Event material, mounted at run time (newspaper PDFs, images)
+papers/*
+!papers/.gitkeep
+media/*
+!media/.gitkeep
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Logs, test artefacts, OS / editor files
+*.log
+npm-debug.log*
+screenshots/
+coverage/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

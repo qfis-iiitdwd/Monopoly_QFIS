@@ -39,12 +39,12 @@ Newspapers go out to teams on WhatsApp, not through the portal.
 | Layer | Choice | Why |
 |---|---|---|
 | Server | **Node.js ≥ 20, Express 4** | One small monolith. Its only runtime dependencies are `express` and `pg`. |
-| Database | **PostgreSQL 16** | All game state, money and guarantees live here: constraints, row locks, append-only triggers. |
+| Database | **Supabase** (hosted PostgreSQL), the only database: production, development and tests | All game state, money and guarantees live here: constraints, row locks, append-only triggers. See [`docs/SUPABASE.md`](docs/SUPABASE.md). |
 | Order execution | **PL/pgSQL** (`mv_place_order`) | Each order is checked and executed in one database round trip, under a row lock. |
 | Frontend | **React 18, TypeScript 5, Vite 5, Tailwind CSS 3**, lucide-react icons | Two single-page apps (player and admin) built from one codebase. |
 | Auth | Session cookies (HttpOnly, SameSite), **scrypt** password hashing | No third-party auth; works on a closed event network. |
 | Packaging | **Docker** (multi-stage), Docker Compose, **Caddy** for automatic HTTPS | One `docker compose up` on any VPS. Also runs on Railway or Render. |
-| Tests | `node:test` integration tests, plus purpose-built load, stress, chaos and headless-browser suites | Everything runs against a real PostgreSQL. |
+| Tests | `node:test` integration tests, plus purpose-built load, stress, chaos and headless-browser suites | Everything runs against a real Supabase database (a separate test project). |
 
 Money is **integer paise** everywhere and percentages are **integer basis points** (100 bps = 1%),
 so rounding errors are impossible.
@@ -70,7 +70,7 @@ flowchart LR
     AD["admin.js<br/>corrections, reversals,<br/>integrity check"]
     TM["1 s deadline timer"]
   end
-  DB[("PostgreSQL 16<br/>21 tables<br/>mv_place_order()<br/>append-only triggers")]
+  DB[("Supabase PostgreSQL<br/>21 tables<br/>mv_place_order()<br/>append-only triggers")]
   P -- "HTTPS + cookie, polling" --> R1
   A -- "HTTPS + cookie, polling" --> R2
   R1 --> AU & T & V
@@ -156,7 +156,7 @@ scripts/
   import-moves.js      spreadsheet → price script
   import-profiles.js   company profiles spreadsheet → names, CEOs, descriptions, prices
   preflight.js         read-only readiness check of a deployment
-  backup.sh, restore.sh
+  backup.sh, restore.sh   verified dump / restore (Supabase or local); lib/pg.sh runs the pg tools in Docker
   loadtest.js, laptops.js, stress.js, ui-audit.js   test suites (see Testing)
 config/
   game.sample.json     a complete example game (committed)
@@ -165,7 +165,10 @@ test/                  integration tests; fixtures/game.json is a safe stand-in 
 docs/
   API.md               every endpoint, request and response
   RULES.md             the rules sheet to hand to teams
+  DEPLOY_ORACLE.md     step-by-step Oracle Cloud deployment
+  SUPABASE.md          the Supabase database: setup, connection, backups, moving a game
   FRONTEND_INTEGRATION.md   how the Monopoly frontend was connected (historical)
+deploy/oracle/         deploy.sh, seed.sh, backup.sh (run from the laptop), server-setup.sh (run on the server)
 papers/, media/        event material mounted at run time (contents git-ignored)
 ```
 
@@ -230,14 +233,14 @@ The admin *Rounds* page shows this breakdown live, company by company, before an
 
 ## Running it locally
 
-**Prerequisites:** Node.js 20+ and Docker (for PostgreSQL).
+**Prerequisites:** Node.js 20+, a Supabase project ([`docs/SUPABASE.md`](docs/SUPABASE.md)), and Docker (only for backups and deployment).
 
 ```sh
 git clone <this repo> marketverse && cd marketverse
 npm install
 (cd frontend && npm install && npm run build)    # builds both apps into public/app
 
-docker compose up -d db                          # PostgreSQL 16 on localhost:5433
+cp .env.example .env                             # then set DATABASE_URL to the Supabase URI
 
 cp config/game.sample.json config/game.json      # or put the real event config here
 ADMIN_PASSWORD='choose-a-strong-one' npm run seed -- --reset
@@ -248,24 +251,25 @@ npm start                                        # http://localhost:3000
   passwords, and the only copy. Admin username is `admin`, with the `ADMIN_PASSWORD` you chose.
 - **Fixed passwords for practice:** add `--test-passwords` to the seed, so team `team01` has password
   `pw-team01`. **Never for the real event.**
+- **Database:** `npm start`, the seed, preflight and backups all read `DATABASE_URL` from `.env`.
+  Use a separate Supabase project for development if the event project already holds a real game.
 - **Hot reload while editing screens:** run the server, then
   `cd frontend && BACKEND=http://localhost:3000 npm run dev`. Vite proxies `/api`.
-- **Everything in Docker:**
-  `ADMIN_PASSWORD=... docker compose --profile full up -d --build`, then
-  `docker compose exec app node scripts/seed.js --reset`.
 
 **Environment variables**
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `DATABASE_URL` | `postgres://marketverse:marketverse@localhost:5433/marketverse` | PostgreSQL connection |
+| `DATABASE_URL` | **required** | The Supabase session pooler URI. Also read from `.env` |
+| `TEST_DATABASE_URL` | — | A separate Supabase project for `npm test` (the tests wipe it). Also read from `.env` |
+| `DB_SSL` | on for Supabase | `require` (encrypted), `verify` (also check the certificate against `DB_SSL_CA`, default `config/supabase-ca.crt`), `0` (off) |
 | `PORT` | `3000` | HTTP port |
 | `ADMIN_PASSWORD` / `ADMIN_USERNAME` | — / `admin` | Admin login created by the seed |
 | `COOKIE_SECURE` | off | Set `1` when served over HTTPS |
 | `DB_POOL_SIZE` | `20` | Connections for player traffic (use 40 if the DB is >10 ms away) |
 | `DB_ADMIN_POOL_SIZE` | `4` | Connections reserved for admin actions and the deadline timer |
 | `SCRYPT_CONCURRENCY` | `2` | Concurrent password checks |
-| `DB_STARTUP_TIMEOUTS` | on | Set `0` behind a transaction-mode pooler (see Deployment) |
+| `DB_STARTUP_TIMEOUTS` | `session` on Supabase, else `1` | How statement/lock time limits are applied: `1` startup parameters, `session` SET on each connection, `0` not at all (set them on the role) |
 | `LEGACY_UI` | off | `1` serves the old plain-JS screens instead of the React apps |
 
 ---
@@ -410,47 +414,58 @@ The seed validates everything and refuses to wipe a started event unless you pas
 
 ## Deployment
 
-The app needs a **long-running Node process and PostgreSQL**. Static or serverless hosts (Netlify,
+The app needs a **long-running Node process and the Supabase database**
+([`docs/SUPABASE.md`](docs/SUPABASE.md): create the project and get `DATABASE_URL` first). Static or serverless hosts (Netlify,
 Vercel functions) can't run it: the deadline timer, the in-memory throttles and the database pool need
 a persistent process.
 
-### Option A: Railway (recommended for the event)
-1. Create a project in **Southeast Asia (Singapore)**. Add a **PostgreSQL** service and a service from
-   this repo; the Dockerfile builds both apps.
+### Option A: Oracle Cloud Always Free (free, scripted)
+A free 2–4 CPU ARM server in Mumbai or Hyderabad. The full click-by-click guide is
+[`docs/DEPLOY_ORACLE.md`](docs/DEPLOY_ORACLE.md). After the one-time console setup, everything runs from the laptop:
+```sh
+deploy/oracle/deploy.sh ubuntu@<IP> --database-url '<Supabase URI>'   # set up the server, copy code + config, HTTPS, start
+deploy/oracle/seed.sh ubuntu@<IP> --practice        # or --real (writes ./credentials.csv)
+deploy/oracle/backup.sh ubuntu@<IP> pre-event       # verified dump, copied to ./backups/
+```
+
+### Option B: Railway (paid Hobby plan)
+1. Create a project in **Southeast Asia (Singapore)** with a service from this repo; the Dockerfile
+   builds both apps. No database service: the database is Supabase.
 2. Variables on the app service:
-   - `DATABASE_URL` = the database's *private* URL;
+   - `DATABASE_URL` = the Supabase session pooler URI;
    - `COOKIE_SECURE=1`;
    - `ADMIN_PASSWORD` = a long random string;
    - `DB_POOL_SIZE=20`.
 3. Replicas: exactly **1**. Give the app at least 1 vCPU (50 simultaneous first logins are CPU-heavy).
 4. Seed **from your laptop** using the database's *public* URL. The server never reads `config/game.json`:
    ```sh
-   DATABASE_URL='<public url>' ADMIN_PASSWORD='<same as above>' node scripts/seed.js --reset --force --out credentials.csv
+   DATABASE_URL='<Supabase URI>' ADMIN_PASSWORD='<same as above>' node scripts/seed.js --reset --force --out credentials.csv
    ```
 5. Check: `https://<app>/api/health` returns `{"ok":true}`. Run
-   `DATABASE_URL='<public url>' npm run preflight`. It must say READY.
+   `DATABASE_URL='<Supabase URI>' npm run preflight`. It must say READY.
 
-### Option B: one VPS with Docker Compose and Caddy (tested on 1 vCPU / 1 GB)
+### Option C: any other VPS with Docker Compose and Caddy (tested on 1 vCPU / 1 GB)
 1. Ubuntu VPS with Docker; ports 80/443 open; a DNS A record pointing at it.
-2. Copy the repo, then `cp .env.example .env` and fill in `DOMAIN`, `POSTGRES_PASSWORD` and `ADMIN_PASSWORD`.
+2. Copy the repo, then `cp .env.example .env` and fill in `DOMAIN`, `DATABASE_URL` and `ADMIN_PASSWORD`.
 3. Put `config/game.json` in `config/`. It is mounted read-only, never inside the image.
-4. `docker compose up -d --build`. `.env` selects `docker-compose.prod.yml`: PostgreSQL + app +
+4. `docker compose up -d --build`. `.env` selects `docker-compose.prod.yml`: app +
    Caddy with automatic HTTPS.
 5. Seed: `docker compose exec -T app node scripts/seed.js --reset --force --out - > credentials.csv`.
 6. Check: `docker compose exec app node scripts/preflight.js` must say READY.
 
 **Notes**
-- **Database latency:** keep app and database in the same region. Above ~10 ms of database
+- **Database latency:** keep app and database in the same region (Supabase `ap-south-1` Mumbai for an Indian server). Above ~10 ms of database
   round-trip time, set `DB_POOL_SIZE=40`.
-- **Connections:** the app opens up to `DB_POOL_SIZE + DB_ADMIN_POOL_SIZE` (24) connections.
-- **Poolers:** use a direct connection, not a transaction-mode pooler. If you must use one, set
-  `DB_STARTUP_TIMEOUTS=0` and set the timeouts on the role instead:
+- **Connections:** the app opens up to `DB_POOL_SIZE + DB_ADMIN_POOL_SIZE` (24) connections. Supabase's
+  session pooler *Pool Size* must allow them (34+); preflight checks.
+- **Poolers:** use Supabase's session pooler or a direct connection, not a transaction-mode pooler
+  (port 6543). If you must use one, set `DB_STARTUP_TIMEOUTS=0` and set the timeouts on the role instead:
   ```sql
   ALTER ROLE ... SET statement_timeout = '15s';
   ```
 - **Proxies:** proxy timeouts must exceed 15 s.
-- **Backups:** `sh scripts/backup.sh <label>` dumps the database and proves the dump restores.
-  `sh scripts/restore.sh backups/<file>.dump` restores it.
+- **Backups:** `sh scripts/backup.sh <label>` dumps the database (Supabase when `DATABASE_URL` is set)
+  and proves the dump restores. `sh scripts/restore.sh backups/<file>.dump` restores it. Only Docker is needed.
 
 ---
 
@@ -485,14 +500,15 @@ After Round 10: **End event** freezes the final rankings.
 | A team's fat-finger trade | *Orders* → **Reverse** |
 | Leaked password / cheating | **Reset Password** or **Disable Team** |
 | Something wrong with a company | *Companies* → **Suspend** (reason shown to teams) |
-| Portal down | Pause if possible; the database keeps every committed trade. Restart the app (state lives entirely in PostgreSQL); resume with the pause added. Last resort: `scripts/restore.sh` the latest backup. |
+| Portal down | Pause if possible; the database keeps every committed trade. Restart the app (state lives entirely in the database); resume with the pause added. Last resort: `scripts/restore.sh` the latest backup. |
 
 ---
 
 ## Testing
 
 ```sh
-# once: docker compose exec db psql -U marketverse -c "CREATE DATABASE marketverse_test"
+# TEST_DATABASE_URL (environment or .env) = a separate Supabase project kept for tests: they wipe it.
+# The tests refuse to run if it is the game's DATABASE_URL.
 npm test
 ```
 
@@ -545,6 +561,9 @@ ADMIN_PASSWORD=x npm run seed -- --reset --force --test-passwords --config /tmp/
   on API responses.
 - **Append-only books:** enforced by database triggers. Every admin write is audited with the reason
   and before/after state.
+- **Supabase's public API is shut:** at startup the app turns on row level security and revokes the
+  `anon`/`authenticated` roles' access to every game table and function, so the project's public anon
+  key can't read password hashes or place orders. Preflight checks it. The app connects over SSL.
 
 ---
 
@@ -552,7 +571,11 @@ ADMIN_PASSWORD=x npm run seed -- --reset --force --test-passwords --config /tmp/
 
 | Symptom | Fix |
 |---|---|
-| `ECONNREFUSED 5433` | `docker compose up -d db` |
+| `DATABASE_URL is not set` | Put the Supabase URI in `.env` ([`docs/SUPABASE.md`](docs/SUPABASE.md)) |
+| Supabase: `ENOTFOUND` / `ENETUNREACH` on `db.<ref>.supabase.co` | That host is IPv6-only: use the **Session pooler** URI ([`docs/SUPABASE.md`](docs/SUPABASE.md)) |
+| Supabase: `password authentication failed` | User must be `postgres.<project-ref>` on the pooler; special characters in the password must be percent-encoded |
+| Supabase: `max clients reached` / preflight can't open all connections | Raise *Pool Size* in Supabase's Database settings to 34+ |
+| Supabase: project paused | Dashboard → Restore project (free projects pause after a week idle) |
 | Blank page or old screens at `/` | Build the apps: `cd frontend && npm install && npm run build` |
 | `npm test` fails to connect | Create the test DB (see Testing) |
 | Seed refuses: "event has started" | Add `--force` (wipes the game) |

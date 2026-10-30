@@ -456,3 +456,35 @@ BEGIN
       FROM orders o LEFT JOIN trades t ON t.order_id = o.id WHERE o.id = r.order_id) x);
 END;
 $$ LANGUAGE plpgsql;
+
+-- Supabase publishes every table and function in the public schema through its Data API (REST and
+-- GraphQL) to anyone holding the project's anon key, which is public by design. This app only talks
+-- to the database directly, so shut that door: row level security on with no policies (the app's
+-- role owns the tables and is not subject to it), and no privileges for the API roles. Without
+-- this, anyone could read password hashes and session tokens or call mv_place_order for any team.
+-- Each step runs only if still needed, so restarts take no table locks. No-op on plain PostgreSQL.
+DO $$
+DECLARE r RECORD;
+BEGIN
+  IF (SELECT COUNT(*) FROM pg_roles WHERE rolname IN ('anon', 'authenticated')) < 2 THEN RETURN; END IF;
+  FOR r IN SELECT c.oid::regclass AS rel, c.relkind, c.relrowsecurity FROM pg_class c
+            WHERE c.relnamespace = 'public'::regnamespace AND c.relkind IN ('r', 'S') AND pg_has_role(c.relowner, 'USAGE') LOOP
+    -- Nested IFs: SQL does not short-circuit AND, and has_sequence_privilege rejects tables.
+    IF r.relkind = 'r' THEN
+      IF NOT r.relrowsecurity THEN
+        EXECUTE format('ALTER TABLE %s ENABLE ROW LEVEL SECURITY', r.rel);
+      END IF;
+      IF has_table_privilege('anon', r.rel, 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+         OR has_table_privilege('authenticated', r.rel, 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') THEN
+        EXECUTE format('REVOKE ALL ON TABLE %s FROM anon, authenticated', r.rel);
+      END IF;
+    ELSIF has_sequence_privilege('anon', r.rel, 'USAGE,SELECT,UPDATE') OR has_sequence_privilege('authenticated', r.rel, 'USAGE,SELECT,UPDATE') THEN
+      EXECUTE format('REVOKE ALL ON SEQUENCE %s FROM anon, authenticated', r.rel);
+    END IF;
+  END LOOP;
+  FOR r IN SELECT p.oid::regprocedure AS fn FROM pg_proc p
+            WHERE p.pronamespace = 'public'::regnamespace AND pg_has_role(p.proowner, 'USAGE')
+              AND (has_function_privilege('anon', p.oid, 'EXECUTE') OR has_function_privilege('authenticated', p.oid, 'EXECUTE')) LOOP
+    EXECUTE format('REVOKE EXECUTE ON FUNCTION %s FROM PUBLIC, anon, authenticated', r.fn);
+  END LOOP;
+END $$;

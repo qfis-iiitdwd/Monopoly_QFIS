@@ -1,7 +1,7 @@
 // Backend features added for the React frontend: disabling teams, hidden rankings, company story
 // details (CEO + extra facts), the all-teams ledger, net-worth history and the overview figures.
-//   TEST_DATABASE_URL=postgres://marketverse:marketverse@localhost:5433/marketverse_test npm test
-process.env.DATABASE_URL = process.env.TEST_DATABASE_URL || 'postgres://marketverse:marketverse@localhost:5433/marketverse_test';
+//   TEST_DATABASE_URL='<test Supabase project URI>' npm test
+require('./db-url');
 
 const test = require('node:test');
 const assert = require('node:assert/strict');

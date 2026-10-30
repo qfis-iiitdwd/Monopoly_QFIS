@@ -1,36 +1,17 @@
-# Production stack: PostgreSQL + the app + Caddy (automatic HTTPS certificates).
+# Production stack: the app + Caddy (automatic HTTPS). The database is Supabase (DATABASE_URL).
 #   cp .env.example .env   # then edit it
 #   docker compose up -d --build
 # (.env sets COMPOSE_FILE=docker-compose.prod.yml, so plain `docker compose` uses this file.)
 services:
-  db:
-    image: postgres:16-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: marketverse
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
-      POSTGRES_DB: marketverse
-    command: ["postgres", "-c", "max_connections=60", "-c", "shared_buffers=128MB", "-c", "synchronous_commit=on"]
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U marketverse"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-    # No published port: the database is reachable only from the app container.
-
   app:
     build: .
     restart: always
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
-      DATABASE_URL: postgres://marketverse:${POSTGRES_PASSWORD}@db:5432/marketverse
+      DATABASE_URL: ${DATABASE_URL:?set DATABASE_URL in .env (Supabase session pooler connection string)}
       PORT: "3000"
       COOKIE_SECURE: "1"
       DB_POOL_SIZE: ${DB_POOL_SIZE:-20}
+      DB_SSL: ${DB_SSL:-}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD in .env}
     volumes:
       - ./config:/app/config:ro
@@ -57,6 +38,5 @@ services:
       - caddy_config:/config
 
 volumes:
-  pgdata:
   caddy_data:
   caddy_config:

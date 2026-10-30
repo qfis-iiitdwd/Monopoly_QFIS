@@ -10,7 +10,7 @@
 //
 // DESTRUCTIVE: it plays a whole event. Run it only against a throwaway database seeded with
 // --test-passwords, e.g.
-//   DATABASE_URL=.../marketverse_ui node scripts/seed.js --reset --test-passwords   (ADMIN_PASSWORD=admin-dev-pass)
+//   DATABASE_URL='<throwaway Supabase project URI>' node scripts/seed.js --reset --test-passwords   (ADMIN_PASSWORD=admin-dev-pass)
 //   node scripts/ui-audit.js --url http://localhost:3100 --admin-password admin-dev-pass
 // Browser: BROWSER=/path/to/chrome (default: Brave or Chrome in /Applications).
 // --insecure accepts a self-signed certificate (local HTTPS test stacks only). For the API read-backs

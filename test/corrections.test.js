@@ -1,7 +1,7 @@
 // Price script (pre-decided % moves per round) and admin corrections, checked against an
 // independent re-calculation. Run against a disposable database, like game.test.js:
-//   TEST_DATABASE_URL=postgres://marketverse:marketverse@localhost:5433/marketverse_test npm test
-process.env.DATABASE_URL = process.env.TEST_DATABASE_URL || 'postgres://marketverse:marketverse@localhost:5433/marketverse_test';
+//   TEST_DATABASE_URL='<test Supabase project URI>' npm test
+require('./db-url');
 
 const test = require('node:test');
 const assert = require('node:assert/strict');

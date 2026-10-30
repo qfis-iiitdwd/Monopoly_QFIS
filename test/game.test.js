@@ -1,6 +1,6 @@
-// Integration tests. Run against a disposable database:
-//   TEST_DATABASE_URL=postgres://marketverse:marketverse@localhost:5433/marketverse_test npm test
-process.env.DATABASE_URL = process.env.TEST_DATABASE_URL || 'postgres://marketverse:marketverse@localhost:5433/marketverse_test';
+// Integration tests. Run against a disposable Supabase project (never the game's):
+//   TEST_DATABASE_URL='<test Supabase project URI>' npm test
+require('./db-url');
 
 const test = require('node:test');
 const assert = require('node:assert/strict');

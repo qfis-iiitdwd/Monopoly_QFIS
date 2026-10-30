@@ -38,6 +38,23 @@ const ROOT = path.join(__dirname, '..');
     const { rows: [{ max_connections: mc }] } = await db.query('SHOW max_connections');
     const need = pool + Number(process.env.DB_ADMIN_POOL_SIZE || 4) + 10;
     (Number(mc) >= need ? ok : fail)(`max_connections ${mc} (needs ≥ ${need})`);
+    // Every connection the app may use, open at once. Supabase's session pooler caps this at its Pool Size.
+    const held = await Promise.allSettled([db.pool, db.adminPool].flatMap((p) => Array.from({ length: p.options.max }, () => p.connect())));
+    const failed = held.find((h) => h.status === 'rejected');
+    held.forEach((h) => h.status === 'fulfilled' && h.value.release());
+    (failed ? fail : ok)(failed
+      ? `could not open all ${held.length} app connections at once: ${failed.reason.message}${db.isSupabase ? ' — raise Pool Size in Supabase (Database settings → Connection pooling) to at least ' + need : ''}`
+      : `opened all ${held.length} app connections at once`);
+    const { rows: [api] } = await db.query(`SELECT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') AS supabase`);
+    if (api.supabase) {
+      const { rows: [x] } = await db.query(`SELECT
+        (SELECT COUNT(*) FROM pg_class WHERE relnamespace = 'public'::regnamespace AND relkind = 'r'
+           AND (NOT relrowsecurity OR has_table_privilege('anon', oid, 'SELECT,INSERT,UPDATE,DELETE'))) AS tables,
+        (SELECT COUNT(*) FROM pg_proc WHERE pronamespace = 'public'::regnamespace AND has_function_privilege('anon', oid, 'EXECUTE')) AS fns`);
+      (Number(x.tables) + Number(x.fns) ? fail : ok)(Number(x.tables) + Number(x.fns)
+        ? `Supabase Data API can reach ${x.tables} tables and ${x.fns} functions with the public anon key: restart the app (its startup locks them down)`
+        : 'Supabase Data API (anon key) cannot reach any game table or function');
+    }
     const { rows: [{ skew }] } = await db.query('SELECT EXTRACT(EPOCH FROM (clock_timestamp() - $1::timestamptz)) * 1000 AS skew', [new Date().toISOString()]);
     (Math.abs(skew) < 2000 ? ok : warn)(`app/database clock difference ${Number(skew).toFixed(0)} ms (the app compensates; large values mean a misconfigured clock)`);
   } catch (e) {

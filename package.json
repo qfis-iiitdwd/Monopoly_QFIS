@@ -6,7 +6,6 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "db:up": "docker compose up -d db",
     "seed": "node scripts/seed.js",
     "test": "node --test --test-concurrency=1 test/*.test.js",
     "loadtest": "node scripts/loadtest.js",
@@ -21,6 +20,6 @@
   },
   "dependencies": {
     "express": "^4.21.2",
-    "pg": "^8.13.1"
+    "pg": "^8.23.1"
   }
 }

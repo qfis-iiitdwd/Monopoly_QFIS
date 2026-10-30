@@ -9,11 +9,21 @@ types.setTypeParser(20, (v) => (v === null ? null : Number(v)));
 require('./env').loadEnvFile();
 
 // The database is Supabase (docs/SUPABASE.md). There is no built-in default.
-const connectionString = process.env.DATABASE_URL;
+// Quotes are stripped: hosting dashboards (Railway, ...) take the value literally, unlike .env.
+const connectionString = (process.env.DATABASE_URL || '').trim().replace(/^(['"])(.*)\1$/, '$2');
 if (!connectionString) {
   throw new Error('DATABASE_URL is not set: put the Supabase session pooler URI in .env (see docs/SUPABASE.md)');
 }
-const dbUrl = new URL(connectionString);
+if (/\[YOUR-PASSWORD\]/i.test(connectionString)) {
+  throw new Error('DATABASE_URL still contains [YOUR-PASSWORD]: replace it with the Supabase database password');
+}
+let dbUrl;
+try { dbUrl = new URL(connectionString); } catch {
+  throw new Error('DATABASE_URL is not a valid URL: copy the Session pooler URI from Supabase (Connect → Session pooler)');
+}
+if (/^db\.[^.]+\.supabase\.co$/i.test(dbUrl.hostname)) {
+  console.warn('[db] DATABASE_URL is Supabase\'s direct connection, which is IPv6-only and unreachable from most hosts; use the Session pooler URI (docs/SUPABASE.md)');
+}
 // Supabase: the session pooler (aws-0-<region>.pooler.supabase.com) or the direct host (db.<ref>.supabase.co).
 const isSupabase = /\.supabase\.(co|com)$/i.test(dbUrl.hostname);
 

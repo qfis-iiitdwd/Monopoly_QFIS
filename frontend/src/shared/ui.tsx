@@ -2,16 +2,12 @@ import React, { createContext, useCallback, useContext, useState } from 'react';
 import { AlertTriangle, CheckCircle2, ChevronLeft, ChevronRight, Loader2, X } from 'lucide-react';
 
 // ---- Logo -----------------------------------------------------------------------------------
-export const LogoBars: React.FC<{ small?: boolean }> = ({ small }) => (
-  <div
-    className={`${small ? 'w-8 h-8 rounded-lg' : 'w-11 h-11 rounded-xl'} shrink-0 flex items-center justify-center bg-gradient-to-br from-sky-300 via-sky-400 to-blue-500 shadow-lg shadow-sky-900/40 ring-1 ring-white/20`}
-  >
-    <svg viewBox="0 0 24 24" className={small ? 'w-4 h-4' : 'w-6 h-6'} fill="white" aria-hidden>
-      <rect x="4" y="12" width="4" height="8" rx="1.5" />
-      <rect x="10" y="5" width="4" height="15" rx="1.5" />
-      <rect x="16" y="9" width="4" height="11" rx="1.5" />
-    </svg>
-  </div>
+export const LogoBars: React.FC<{ small?: boolean; className?: string }> = ({ small, className = '' }) => (
+  <img
+    src="/monopoly-icon.png"
+    alt="Monopoly"
+    className={`${small ? 'w-8 h-8 rounded-lg' : 'w-11 h-11 rounded-xl'} shrink-0 object-cover shadow-md shadow-red-950/40 border border-red-500/25 ${className}`}
+  />
 );
 
 // ---- Ticker badge: colour derived from the industry so a sector reads as one colour ----------

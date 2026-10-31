@@ -139,8 +139,15 @@ const Shell: React.FC<{ onLoggedOut: () => void }> = ({ onLoggedOut }) => {
   const sidebar = (
     <aside className="w-64 bg-[#0d121c] border-r border-[#1a2336] flex flex-col justify-between shrink-0 select-none min-h-screen">
       <div>
-        <div className="p-6 pb-8 flex items-center space-x-3">
-          <LogoBars />
+        <div className="p-6 pb-6 flex flex-col items-start">
+          <div className="relative group mb-3.5">
+            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-red-600/30 via-red-500/10 to-amber-500/20 blur-md opacity-70 group-hover:opacity-100 transition duration-300" />
+            <img
+              src="/monopoly-icon.png"
+              alt="Monopoly Icon"
+              className="relative w-16 h-16 rounded-2xl object-cover shadow-lg shadow-red-950/40 border border-red-500/25 transition-transform duration-200 group-hover:scale-105"
+            />
+          </div>
           <div>
             <div className="font-extrabold tracking-wider text-xl leading-none text-white">MONOPOLY</div>
             <div className="text-[10px] tracking-widest text-slate-400 font-semibold uppercase mt-1">ADMIN PANEL</div>

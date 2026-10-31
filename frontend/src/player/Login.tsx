@@ -29,8 +29,8 @@ export const Login: React.FC<{ onDone: () => void }> = ({ onDone }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between relative z-10">
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 my-auto">
+    <div className="relative z-10">
+      <div className="min-h-screen flex items-center justify-center p-4 sm:p-6">
         <form onSubmit={submit} className="w-full max-w-sm mv-glow relative z-10 rounded-[1.75rem] bg-white/[0.03] border border-white/[0.07] backdrop-blur-xl p-8 shadow-2xl space-y-5">
           <div className="flex items-center space-x-3">
             <LogoBars />

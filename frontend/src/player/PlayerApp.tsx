@@ -13,6 +13,7 @@ import { OrderConfirm } from './OrderConfirm';
 import { HistoryModal } from './HistoryModal';
 import { toActivities } from './activity';
 import { describe } from './market';
+import { Footer } from '../shared/Footer';
 
 const initials = (name: string) => name.split(/\s+/).filter(Boolean).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 
@@ -135,48 +136,51 @@ const Shell: React.FC<{ me: Me; onLoggedOut: () => void }> = ({ me, onLoggedOut 
         </div>
       )}
 
-      <main className="flex-1 p-4 sm:p-6 md:p-10 pt-20 md:pt-10 relative z-10 max-w-7xl mx-auto w-full min-w-0">
-        <div className="hidden md:flex justify-end mb-2">
-          <div className="flex items-center space-x-3">
-            <span className="w-9 h-9 rounded-full bg-gradient-to-br from-slate-500 to-slate-700 ring-2 ring-white/10 flex items-center justify-center text-xs font-semibold text-white">
-              {initials(me.member_name || me.team.name)}
-            </span>
-            <div className="leading-tight">
-              <div className="text-[15px] text-slate-100">{me.member_name || me.team.name}</div>
-              {me.member_name && <div className="text-xs text-slate-500">{me.team.name}</div>}
+      <div className="flex-1 flex flex-col min-h-screen min-w-0">
+        <main className="flex-1 p-4 sm:p-6 md:p-10 pt-20 md:pt-10 relative z-10 max-w-7xl mx-auto w-full min-w-0">
+          <div className="hidden md:flex justify-end mb-2">
+            <div className="flex items-center space-x-3">
+              <span className="w-9 h-9 rounded-full bg-gradient-to-br from-slate-500 to-slate-700 ring-2 ring-white/10 flex items-center justify-center text-xs font-semibold text-white">
+                {initials(me.member_name || me.team.name)}
+              </span>
+              <div className="leading-tight">
+                <div className="text-[15px] text-slate-100">{me.member_name || me.team.name}</div>
+                {me.member_name && <div className="text-xs text-slate-500">{me.team.name}</div>}
+              </div>
             </div>
           </div>
-        </div>
-        {offline && (
-          <div className="mb-4 flex items-center space-x-2 rounded-xl bg-rose-950/50 border border-rose-900/70 px-4 py-2.5 text-sm text-rose-200">
-            <WifiOff className="w-4 h-4 shrink-0" />
-            <span>Connection lost. Reconnecting… Your completed trades are safe on the server.</span>
-          </div>
-        )}
-        {status.data?.paused && status.data.phase === 'trading' && (
-          <div className="mb-4 flex items-center space-x-2 rounded-xl bg-amber-950/40 border border-amber-800/60 px-4 py-2.5 text-sm text-amber-200">
-            <PauseCircle className="w-4 h-4 shrink-0" />
-            <span>Trading is paused by the organisers. The countdown resumes when trading does.</span>
-          </div>
-        )}
+          {offline && (
+            <div className="mb-4 flex items-center space-x-2 rounded-xl bg-rose-950/50 border border-rose-900/70 px-4 py-2.5 text-sm text-rose-200">
+              <WifiOff className="w-4 h-4 shrink-0" />
+              <span>Connection lost. Reconnecting… Your completed trades are safe on the server.</span>
+            </div>
+          )}
+          {status.data?.paused && status.data.phase === 'trading' && (
+            <div className="mb-4 flex items-center space-x-2 rounded-xl bg-amber-950/40 border border-amber-800/60 px-4 py-2.5 text-sm text-amber-200">
+              <PauseCircle className="w-4 h-4 shrink-0" />
+              <span>Trading is paused by the organisers. The countdown resumes when trading does.</span>
+            </div>
+          )}
 
-        {tab === 'dashboard' && (
-          <DashboardView status={status.data} portfolio={portfolio.data} activities={activities} onOpenTransactions={openHistory} onTrade={trade} />
-        )}
-        {tab === 'trading' && (
-          <TradingView
-            status={status.data}
-            companies={companies.data}
-            portfolio={portfolio.data}
-            selectedId={selectedId}
-            onSelect={setSelectedId}
-            orders={orders}
-            onOpenOrdersHistory={openHistory}
-            onReview={(company, side, quantity) => setPending({ company, side, quantity })}
-          />
-        )}
-        {tab === 'markets' && <MarketsView status={status.data} companies={companies.data} onSelect={trade} />}
-      </main>
+          {tab === 'dashboard' && (
+            <DashboardView status={status.data} portfolio={portfolio.data} activities={activities} onOpenTransactions={openHistory} onTrade={trade} />
+          )}
+          {tab === 'trading' && (
+            <TradingView
+              status={status.data}
+              companies={companies.data}
+              portfolio={portfolio.data}
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+              orders={orders}
+              onOpenOrdersHistory={openHistory}
+              onReview={(company, side, quantity) => setPending({ company, side, quantity })}
+            />
+          )}
+          {tab === 'markets' && <MarketsView status={status.data} companies={companies.data} onSelect={trade} />}
+        </main>
+        <Footer />
+      </div>
 
       {historyOpen && <HistoryModal rows={activities} loading={tx.loading} onClose={() => setHistoryOpen(false)} />}
       {pending && (

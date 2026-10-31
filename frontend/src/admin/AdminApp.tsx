@@ -3,6 +3,7 @@ import { ArrowLeftRight, Building2, FileText, History, Home, LogIn, LogOut, Menu
 import { ApiError, errorMessage, get, post, setUnauthorizedHandler } from '../shared/api';
 import { Polled, usePoll } from '../shared/hooks';
 import { btn, ErrorNote, input, LogoBars, Spinner, ToastProvider } from '../shared/ui';
+import { Footer } from '../shared/Footer';
 import { ActionDialog, ActionSpec } from './ActionDialog';
 import { AdminTeam, Overview } from './types';
 import { OverviewView } from './views/Overview';
@@ -72,29 +73,32 @@ const AdminLogin: React.FC<{ onDone: () => void }> = ({ onDone }) => {
     }
   };
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <form onSubmit={submit} className="w-full max-w-sm rounded-2xl bg-[#111622] border border-[#1e2638] p-7 shadow-2xl space-y-5">
-        <div className="flex items-center space-x-3">
-          <LogoBars />
-          <div>
-            <div className="font-extrabold tracking-wider text-xl leading-none text-white">MONOPOLY</div>
-            <div className="text-[10px] tracking-widest text-slate-400 font-semibold uppercase mt-1">ADMIN PANEL</div>
+    <div className="min-h-screen flex flex-col justify-between p-4 sm:p-6 relative z-10">
+      <div className="flex-1 flex items-center justify-center py-10 my-auto">
+        <form onSubmit={submit} className="w-full max-w-sm rounded-2xl bg-[#111622] border border-[#1e2638] p-7 shadow-2xl space-y-5">
+          <div className="flex items-center space-x-3">
+            <LogoBars />
+            <div>
+              <div className="font-extrabold tracking-wider text-xl leading-none text-white">MONOPOLY</div>
+              <div className="text-[10px] tracking-widest text-slate-400 font-semibold uppercase mt-1">ADMIN PANEL</div>
+            </div>
           </div>
-        </div>
-        <label className="block space-y-1.5">
-          <span className="text-xs font-medium text-slate-300">Username</span>
-          <input className={input} value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" required />
-        </label>
-        <label className="block space-y-1.5">
-          <span className="text-xs font-medium text-slate-300">Password</span>
-          <input className={input} type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required />
-        </label>
-        <ErrorNote text={error} />
-        <button type="submit" disabled={busy || !password} className={`${btn.primary} w-full py-3 text-sm`}>
-          {busy ? <Spinner /> : <LogIn className="w-4 h-4" />}
-          <span>Log in</span>
-        </button>
-      </form>
+          <label className="block space-y-1.5">
+            <span className="text-xs font-medium text-slate-300">Username</span>
+            <input className={input} value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" required />
+          </label>
+          <label className="block space-y-1.5">
+            <span className="text-xs font-medium text-slate-300">Password</span>
+            <input className={input} type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required />
+          </label>
+          <ErrorNote text={error} />
+          <button type="submit" disabled={busy || !password} className={`${btn.primary} w-full py-3 text-sm`}>
+            {busy ? <Spinner /> : <LogIn className="w-4 h-4" />}
+            <span>Log in</span>
+          </button>
+        </form>
+      </div>
+      <Footer />
     </div>
   );
 };
@@ -161,6 +165,10 @@ const Shell: React.FC<{ onLoggedOut: () => void }> = ({ onLoggedOut }) => {
           <LogOut className="w-4 h-4 mr-3" />
           <span>Logout</span>
         </button>
+        <div className="mt-3 pt-3 border-t border-[#1a2336] text-[10px] text-slate-500 leading-tight px-1">
+          <div>Designed & Developed by</div>
+          <div className="text-slate-300 font-medium mt-0.5">Prince, Bhavik, Darsh & Yash</div>
+        </div>
       </div>
     </aside>
   );
@@ -192,26 +200,29 @@ const Shell: React.FC<{ onLoggedOut: () => void }> = ({ onLoggedOut }) => {
             <div className="flex-1 bg-black/60" onClick={() => setMenuOpen(false)} />
           </div>
         )}
-        <main className="flex-1 p-4 sm:p-6 md:p-8 pt-20 md:pt-8 relative z-10 max-w-7xl mx-auto w-full min-w-0">
-          {offline && (
-            <div className="mb-4 flex items-center space-x-2 rounded-xl bg-rose-950/50 border border-rose-900/70 px-4 py-2.5 text-sm text-rose-200">
-              <WifiOff className="w-4 h-4 shrink-0" />
-              <span>Cannot reach the server. Showing the last known data; retrying…</span>
-            </div>
-          )}
-          {!overview.data ? (
-            <div className="py-24 flex justify-center text-slate-400"><Spinner className="w-6 h-6" /></div>
-          ) : (
-            <>
-              {tab === 'overview' && <OverviewView />}
-              {tab === 'rounds' && <RoundsView />}
-              {tab === 'participants' && <ParticipantsView />}
-              {tab === 'orders' && <OrdersView />}
-              {tab === 'transactions' && <TransactionsView />}
-              {tab === 'companies' && <CompaniesView />}
-            </>
-          )}
-        </main>
+        <div className="flex-1 flex flex-col min-h-screen min-w-0">
+          <main className="flex-1 p-4 sm:p-6 md:p-8 pt-20 md:pt-8 relative z-10 max-w-7xl mx-auto w-full min-w-0">
+            {offline && (
+              <div className="mb-4 flex items-center space-x-2 rounded-xl bg-rose-950/50 border border-rose-900/70 px-4 py-2.5 text-sm text-rose-200">
+                <WifiOff className="w-4 h-4 shrink-0" />
+                <span>Cannot reach the server. Showing the last known data; retrying…</span>
+              </div>
+            )}
+            {!overview.data ? (
+              <div className="py-24 flex justify-center text-slate-400"><Spinner className="w-6 h-6" /></div>
+            ) : (
+              <>
+                {tab === 'overview' && <OverviewView />}
+                {tab === 'rounds' && <RoundsView />}
+                {tab === 'participants' && <ParticipantsView />}
+                {tab === 'orders' && <OrdersView />}
+                {tab === 'transactions' && <TransactionsView />}
+                {tab === 'companies' && <CompaniesView />}
+              </>
+            )}
+          </main>
+          <Footer />
+        </div>
         {dialog && <ActionDialog spec={dialog} onClose={() => setDialog(null)} onDone={done} />}
       </div>
     </Ctx.Provider>

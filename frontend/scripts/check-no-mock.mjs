@@ -2,6 +2,7 @@
 // alert() stubs, random numbers or the old sample tickers/teams creep back into the source.
 import { readdirSync, readFileSync, statSync } from 'fs';
 import { join } from 'path';
+import { fileURLToPath } from 'url';
 
 const BANNED = [
   [/mockData|adminMockData|INITIAL_[A-Z]+|ADMIN_(TEAMS|ORDERS|TRANSACTIONS|ACTIVITIES|ROUNDS|PRICE_UPDATES|STATS)/, 'mock data'],
@@ -17,7 +18,7 @@ const files = [];
     if (statSync(p).isDirectory()) walk(p);
     else if (/\.(tsx?|jsx?)$/.test(f)) files.push(p);
   }
-})(new URL('../src', import.meta.url).pathname);
+})(fileURLToPath(new URL('../src', import.meta.url)));
 const problems = [];
 for (const f of files) {
   readFileSync(f, 'utf8').split('\n').forEach((line, i) => {

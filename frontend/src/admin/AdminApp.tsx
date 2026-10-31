@@ -73,8 +73,8 @@ const AdminLogin: React.FC<{ onDone: () => void }> = ({ onDone }) => {
     }
   };
   return (
-    <div className="min-h-screen flex flex-col justify-between p-4 sm:p-6 relative z-10">
-      <div className="flex-1 flex items-center justify-center py-10 my-auto">
+    <div className="min-h-screen flex flex-col justify-between relative z-10">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 my-auto">
         <form onSubmit={submit} className="w-full max-w-sm rounded-2xl bg-[#111622] border border-[#1e2638] p-7 shadow-2xl space-y-5">
           <div className="flex items-center space-x-3">
             <LogoBars />
@@ -172,10 +172,6 @@ const Shell: React.FC<{ onLoggedOut: () => void }> = ({ onLoggedOut }) => {
           <LogOut className="w-4 h-4 mr-3" />
           <span>Logout</span>
         </button>
-        <div className="mt-3 pt-3 border-t border-[#1a2336] text-[10px] text-slate-500 leading-tight px-1">
-          <div>Designed & Developed by</div>
-          <div className="text-slate-300 font-medium mt-0.5">Prince, Bhavik, Darsh & Yash</div>
-        </div>
       </div>
     </aside>
   );
@@ -183,7 +179,7 @@ const Shell: React.FC<{ onLoggedOut: () => void }> = ({ onLoggedOut }) => {
   const offline = overview.error?.offline || overview.error?.status === 503;
   return (
     <Ctx.Provider value={{ overview, teams, act: setDialog, version, refresh: done, go, focusTeam }}>
-      <div className="min-h-screen bg-[#0b0f17] text-slate-100 flex relative overflow-x-hidden font-sans">
+      <div className="min-h-screen bg-[#0b0f17] text-slate-100 flex flex-col relative overflow-x-hidden font-sans">
         <div className="fixed inset-0 pointer-events-none z-0">
           <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-red-900/10 rounded-full blur-3xl" />
           <div className="absolute top-1/4 -right-24 w-96 h-96 bg-blue-900/10 rounded-full blur-3xl" />
@@ -200,36 +196,40 @@ const Shell: React.FC<{ onLoggedOut: () => void }> = ({ onLoggedOut }) => {
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
-        <div className="hidden md:block sticky top-0 h-screen z-20 overflow-y-auto">{sidebar}</div>
-        {menuOpen && (
-          <div className="fixed inset-0 z-50 md:hidden flex">
-            <div className="w-64 bg-[#0d121c] h-full shadow-2xl relative z-10 overflow-y-auto">{sidebar}</div>
-            <div className="flex-1 bg-black/60" onClick={() => setMenuOpen(false)} />
+
+        <div className="flex-1 flex w-full min-w-0 relative z-10">
+          <div className="hidden md:block sticky top-0 h-screen z-20 overflow-y-auto">{sidebar}</div>
+          {menuOpen && (
+            <div className="fixed inset-0 z-50 md:hidden flex">
+              <div className="w-64 bg-[#0d121c] h-full shadow-2xl relative z-10 overflow-y-auto">{sidebar}</div>
+              <div className="flex-1 bg-black/60" onClick={() => setMenuOpen(false)} />
+            </div>
+          )}
+          <div className="flex-1 flex flex-col min-w-0">
+            <main className="flex-1 p-4 sm:p-6 md:p-8 pt-20 md:pt-8 relative z-10 max-w-7xl mx-auto w-full min-w-0">
+              {offline && (
+                <div className="mb-4 flex items-center space-x-2 rounded-xl bg-rose-950/50 border border-rose-900/70 px-4 py-2.5 text-sm text-rose-200">
+                  <WifiOff className="w-4 h-4 shrink-0" />
+                  <span>Cannot reach the server. Showing the last known data; retrying…</span>
+                </div>
+              )}
+              {!overview.data ? (
+                <div className="py-24 flex justify-center text-slate-400"><Spinner className="w-6 h-6" /></div>
+              ) : (
+                <>
+                  {tab === 'overview' && <OverviewView />}
+                  {tab === 'rounds' && <RoundsView />}
+                  {tab === 'participants' && <ParticipantsView />}
+                  {tab === 'orders' && <OrdersView />}
+                  {tab === 'transactions' && <TransactionsView />}
+                  {tab === 'companies' && <CompaniesView />}
+                </>
+              )}
+            </main>
           </div>
-        )}
-        <div className="flex-1 flex flex-col min-h-screen min-w-0">
-          <main className="flex-1 p-4 sm:p-6 md:p-8 pt-20 md:pt-8 relative z-10 max-w-7xl mx-auto w-full min-w-0">
-            {offline && (
-              <div className="mb-4 flex items-center space-x-2 rounded-xl bg-rose-950/50 border border-rose-900/70 px-4 py-2.5 text-sm text-rose-200">
-                <WifiOff className="w-4 h-4 shrink-0" />
-                <span>Cannot reach the server. Showing the last known data; retrying…</span>
-              </div>
-            )}
-            {!overview.data ? (
-              <div className="py-24 flex justify-center text-slate-400"><Spinner className="w-6 h-6" /></div>
-            ) : (
-              <>
-                {tab === 'overview' && <OverviewView />}
-                {tab === 'rounds' && <RoundsView />}
-                {tab === 'participants' && <ParticipantsView />}
-                {tab === 'orders' && <OrdersView />}
-                {tab === 'transactions' && <TransactionsView />}
-                {tab === 'companies' && <CompaniesView />}
-              </>
-            )}
-          </main>
-          <Footer />
         </div>
+
+        <Footer />
         {dialog && <ActionDialog spec={dialog} onClose={() => setDialog(null)} onDone={done} />}
       </div>
     </Ctx.Provider>

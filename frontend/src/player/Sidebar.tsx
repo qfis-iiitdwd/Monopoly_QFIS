@@ -68,11 +68,5 @@ export const Sidebar: React.FC<{
         <span>Logout</span>
       </button>
     </div>
-
-    <div className="mt-auto pt-6 border-t border-white/[0.06] text-[11px] text-slate-500 leading-relaxed px-1">
-      <div className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-0.5">Created By</div>
-      <div className="text-slate-300 font-medium text-xs">Prince, Bhavik, Darsh & Yash</div>
-      <div className="text-[10px] text-slate-500 mt-0.5">Designers & Web Developers</div>
-    </div>
   </aside>
 );

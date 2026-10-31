@@ -110,7 +110,7 @@ const Shell: React.FC<{ me: Me; onLoggedOut: () => void }> = ({ me, onLoggedOut 
   const d = describe(status.data);
 
   return (
-    <div className="min-h-screen flex relative overflow-x-hidden">
+    <div className="min-h-screen flex flex-col relative overflow-x-hidden bg-[#0b0f17]">
 
       <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-[#0e0f11]/80 backdrop-blur-xl border-b border-white/[0.06] px-4 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-2.5">
@@ -128,59 +128,62 @@ const Shell: React.FC<{ me: Me; onLoggedOut: () => void }> = ({ me, onLoggedOut 
         </div>
       </div>
 
-      <div className="hidden md:block sticky top-0 h-screen z-20 overflow-y-auto">{sidebar}</div>
-      {menuOpen && (
-        <div className="fixed inset-0 z-50 md:hidden flex">
-          <div className="w-64 bg-[#111214] border-r border-white/[0.06] h-full shadow-2xl relative z-10 overflow-y-auto">{sidebar}</div>
-          <div className="flex-1 bg-black/60 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
-        </div>
-      )}
+      <div className="flex-1 flex w-full min-w-0">
+        <div className="hidden md:block sticky top-0 h-screen z-20 overflow-y-auto">{sidebar}</div>
+        {menuOpen && (
+          <div className="fixed inset-0 z-50 md:hidden flex">
+            <div className="w-64 bg-[#111214] border-r border-white/[0.06] h-full shadow-2xl relative z-10 overflow-y-auto">{sidebar}</div>
+            <div className="flex-1 bg-black/60 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
+          </div>
+        )}
 
-      <div className="flex-1 flex flex-col min-h-screen min-w-0">
-        <main className="flex-1 p-4 sm:p-6 md:p-10 pt-20 md:pt-10 relative z-10 max-w-7xl mx-auto w-full min-w-0">
-          <div className="hidden md:flex justify-end mb-2">
-            <div className="flex items-center space-x-3">
-              <span className="w-9 h-9 rounded-full bg-gradient-to-br from-slate-500 to-slate-700 ring-2 ring-white/10 flex items-center justify-center text-xs font-semibold text-white">
-                {initials(me.member_name || me.team.name)}
-              </span>
-              <div className="leading-tight">
-                <div className="text-[15px] text-slate-100">{me.member_name || me.team.name}</div>
-                {me.member_name && <div className="text-xs text-slate-500">{me.team.name}</div>}
+        <div className="flex-1 flex flex-col min-w-0">
+          <main className="flex-1 p-4 sm:p-6 md:p-10 pt-20 md:pt-10 relative z-10 max-w-7xl mx-auto w-full min-w-0">
+            <div className="hidden md:flex justify-end mb-2">
+              <div className="flex items-center space-x-3">
+                <span className="w-9 h-9 rounded-full bg-gradient-to-br from-slate-500 to-slate-700 ring-2 ring-white/10 flex items-center justify-center text-xs font-semibold text-white">
+                  {initials(me.member_name || me.team.name)}
+                </span>
+                <div className="leading-tight">
+                  <div className="text-[15px] text-slate-100">{me.member_name || me.team.name}</div>
+                  {me.member_name && <div className="text-xs text-slate-500">{me.team.name}</div>}
+                </div>
               </div>
             </div>
-          </div>
-          {offline && (
-            <div className="mb-4 flex items-center space-x-2 rounded-xl bg-rose-950/50 border border-rose-900/70 px-4 py-2.5 text-sm text-rose-200">
-              <WifiOff className="w-4 h-4 shrink-0" />
-              <span>Connection lost. Reconnecting… Your completed trades are safe on the server.</span>
-            </div>
-          )}
-          {status.data?.paused && status.data.phase === 'trading' && (
-            <div className="mb-4 flex items-center space-x-2 rounded-xl bg-amber-950/40 border border-amber-800/60 px-4 py-2.5 text-sm text-amber-200">
-              <PauseCircle className="w-4 h-4 shrink-0" />
-              <span>Trading is paused by the organisers. The countdown resumes when trading does.</span>
-            </div>
-          )}
+            {offline && (
+              <div className="mb-4 flex items-center space-x-2 rounded-xl bg-rose-950/50 border border-rose-900/70 px-4 py-2.5 text-sm text-rose-200">
+                <WifiOff className="w-4 h-4 shrink-0" />
+                <span>Connection lost. Reconnecting… Your completed trades are safe on the server.</span>
+              </div>
+            )}
+            {status.data?.paused && status.data.phase === 'trading' && (
+              <div className="mb-4 flex items-center space-x-2 rounded-xl bg-amber-950/40 border border-amber-800/60 px-4 py-2.5 text-sm text-amber-200">
+                <PauseCircle className="w-4 h-4 shrink-0" />
+                <span>Trading is paused by the organisers. The countdown resumes when trading does.</span>
+              </div>
+            )}
 
-          {tab === 'dashboard' && (
-            <DashboardView status={status.data} portfolio={portfolio.data} activities={activities} onOpenTransactions={openHistory} onTrade={trade} />
-          )}
-          {tab === 'trading' && (
-            <TradingView
-              status={status.data}
-              companies={companies.data}
-              portfolio={portfolio.data}
-              selectedId={selectedId}
-              onSelect={setSelectedId}
-              orders={orders}
-              onOpenOrdersHistory={openHistory}
-              onReview={(company, side, quantity) => setPending({ company, side, quantity })}
-            />
-          )}
-          {tab === 'markets' && <MarketsView status={status.data} companies={companies.data} onSelect={trade} />}
-        </main>
-        <Footer />
+            {tab === 'dashboard' && (
+              <DashboardView status={status.data} portfolio={portfolio.data} activities={activities} onOpenTransactions={openHistory} onTrade={trade} />
+            )}
+            {tab === 'trading' && (
+              <TradingView
+                status={status.data}
+                companies={companies.data}
+                portfolio={portfolio.data}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+                orders={orders}
+                onOpenOrdersHistory={openHistory}
+                onReview={(company, side, quantity) => setPending({ company, side, quantity })}
+              />
+            )}
+            {tab === 'markets' && <MarketsView status={status.data} companies={companies.data} onSelect={trade} />}
+          </main>
+        </div>
       </div>
+
+      <Footer />
 
       {historyOpen && <HistoryModal rows={activities} loading={tx.loading} onClose={() => setHistoryOpen(false)} />}
       {pending && (

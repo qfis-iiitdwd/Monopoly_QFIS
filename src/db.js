@@ -65,7 +65,7 @@ if (isSupabase && dbUrl.port === '6543') {
 // pool, so Pause/Close/Apply never queue behind 250 phones when the main pool is saturated.
 // In session mode a new connection is handed out only after its limits are set (else it is discarded).
 if (timeoutMode === 'session') config.onConnect = (client) => client.query(setTimeouts);
-const pool = new Pool({ ...config, max: Number(process.env.DB_POOL_SIZE || 20) });
+const pool = new Pool({ ...config, max: Number(process.env.DB_POOL_SIZE || 40) });
 const adminPool = new Pool({ ...config, max: Number(process.env.DB_ADMIN_POOL_SIZE || 4) });
 for (const p of [pool, adminPool]) p.on('error', (err) => console.error('[db] idle client error', err.message));
 

@@ -79,7 +79,7 @@ if [ ! -f .env ]; then
 COMPOSE_FILE=docker-compose.prod.yml
 DOMAIN=$DOMAIN
 ADMIN_PASSWORD=$ADMIN
-DB_POOL_SIZE=20
+DB_POOL_SIZE=40
 ENV
   chmod 600 .env
   echo "Created .env. ADMIN PASSWORD (save it now; it's also in $DIR/.env on the server): $ADMIN"

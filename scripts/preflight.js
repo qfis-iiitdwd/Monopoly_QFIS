@@ -33,7 +33,7 @@ const ROOT = path.join(__dirname, '..');
     const t = [];
     for (let i = 0; i < 10; i++) { const t0 = performance.now(); await db.query('SELECT 1'); t.push(performance.now() - t0); }
     rtt = t.sort((a, b) => a - b)[5];
-    const pool = Number(process.env.DB_POOL_SIZE || 20);
+    const pool = Number(process.env.DB_POOL_SIZE || 40);
     (rtt < 10 ? ok : pool >= 40 ? warn : fail)(`database round trip ${rtt.toFixed(1)} ms${rtt >= 10 && pool < 40 ? ' — put app and DB in the same region, or set DB_POOL_SIZE=40' : ''}`);
     const { rows: [{ max_connections: mc }] } = await db.query('SHOW max_connections');
     const need = pool + Number(process.env.DB_ADMIN_POOL_SIZE || 4) + 10;

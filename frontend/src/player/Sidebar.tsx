@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowLeftRight, Home, Landmark, LogOut } from 'lucide-react';
-import { LogoBars, Spinner } from '../shared/ui';
+import { Spinner } from '../shared/ui';
 
 export type NavTab = 'dashboard' | 'trading' | 'markets';
 
@@ -21,15 +21,22 @@ export const Sidebar: React.FC<{
   loggingOut: boolean;
 }> = ({ currentTab, onTabChange, teamName, playerName, onLogout, loggingOut }) => (
   <aside className="w-64 flex flex-col shrink-0 select-none min-h-screen px-6 pt-10 pb-8">
-    <div className="flex items-center space-x-3 px-1">
-      <LogoBars />
+    <div className="px-1 flex flex-col items-start">
+      <div className="relative group mb-3.5">
+        <div className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-red-600/30 via-red-500/10 to-amber-500/20 blur-md opacity-70 group-hover:opacity-100 transition duration-300" />
+        <img
+          src="/monopoly-icon.png"
+          alt="Monopoly Icon"
+          className="relative w-16 h-16 rounded-2xl object-cover shadow-lg shadow-red-950/40 border border-red-500/25 transition-transform duration-200 group-hover:scale-105"
+        />
+      </div>
       <div>
         <div className="font-semibold tracking-[0.18em] text-sm leading-none text-white">MONOPOLY</div>
         <div className="text-[9px] tracking-wider whitespace-nowrap text-slate-500 font-medium uppercase mt-1.5">Finance • Strategy • Markets</div>
       </div>
     </div>
 
-    <nav className="mt-14 space-y-1">
+    <nav className="mt-8 space-y-1">
       {NAV.map((item) => {
         const Icon = item.icon;
         const active = currentTab === item.id;

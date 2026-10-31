@@ -1,5 +1,5 @@
 import React from 'react';
-import { Code2, Palette, Sparkles } from 'lucide-react';
+import { Code2 } from 'lucide-react';
 
 interface Contributor {
   name: string;
@@ -49,7 +49,7 @@ export const Footer: React.FC<{ className?: string }> = ({ className = '' }) => 
           <div className="space-y-1">
             <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               <span className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-300">
-                <Palette className="w-3.5 h-3.5 text-sky-400" />
+                
                 <Code2 className="w-3.5 h-3.5 text-indigo-400" />
                 <span>Credits & Creators</span>
               </span>
@@ -58,7 +58,7 @@ export const Footer: React.FC<{ className?: string }> = ({ className = '' }) => 
             </div>
             <h3 className="text-base sm:text-lg font-semibold text-white tracking-tight flex items-center gap-2">
               Website Designers & Developers
-              <Sparkles className="w-4 h-4 text-amber-400/80" />
+              
             </h3>
             <p className="text-xs text-slate-400 max-w-xl">
               Engineered and designed with focus on real-time market simulation, high performance, and intuitive experience.
@@ -103,8 +103,7 @@ export const Footer: React.FC<{ className?: string }> = ({ className = '' }) => 
         {/* Bottom Bar */}
         <div className="mt-8 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
           <div className="flex items-center space-x-2">
-            <span>© {new Date().getFullYear()} Monopoly Simulation.</span>
-            <span>All rights reserved.</span>
+            
           </div>
           <div className="flex items-center space-x-3 text-slate-400">
             <span>Designed & Developed by Prince Jha, Bhavik Kalva, Darsh Chauhan & Yash Mathur</span>
